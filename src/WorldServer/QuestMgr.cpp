@@ -1553,10 +1553,10 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 	if(qst_giver->GetTypeId() == TYPEID_GAMEOBJECT && !TO_GAMEOBJECT(qst_giver)->HasQuests())
 		return false;
 
+	WorldPacket data(1000);
 	uint32 questCount = sQuestMgr.ActiveQuestsCount(qst_giver, plr);
-	WorldPacket data(1000);	
 
-	if (questCount == 0) 
+	if (questCount == 0)
 	{
 		OUT_DEBUG("WORLD: Invalid NPC for CMSG_QUESTGIVER_HELLO.");
 		return false;
@@ -1577,7 +1577,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 				q_begin = TO_GAMEOBJECT(qst_giver)->QuestsBegin();
 				q_end   = TO_GAMEOBJECT(qst_giver)->QuestsEnd();
 			}
-		} 
+		}
 		else if(qst_giver->GetTypeId() == TYPEID_UNIT)
 		{
 			bValid = TO_CREATURE(qst_giver)->HasQuests();
@@ -1593,30 +1593,30 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 			OUT_DEBUG("QUESTS: Warning, invalid NPC "I64FMT" specified for OnActivateQuestGiver. TypeId: %d.", qst_giver->GetGUID(), qst_giver->GetTypeId());
 			return false;
 		}
-		
-		for(itr = q_begin; itr != q_end; itr++) 
+
+		for(itr = q_begin; itr != q_end; itr++)
 			if (sQuestMgr.CalcQuestStatus(qst_giver, plr, *itr) >= QMGR_QUEST_CHAT)
 				break;
 
 		if (sQuestMgr.CalcStatus(qst_giver, plr) < QMGR_QUEST_CHAT)
-			return false; 
+			return false;
 
 		ASSERT(itr != q_end);
 
-		uint8 status = sQuestMgr.CalcStatus(qst_giver, plr);
+		uint8 status = CalcStatus(qst_giver, plr);
 
-		if ((status == QMGR_QUEST_AVAILABLE) || (status == QMGR_QUEST_REPEATABLE) || (status == QMGR_QUEST_CHAT))
-		{
-			sQuestMgr.BuildQuestDetails(&data, (*itr)->qst, qst_giver, 1, plr->GetSession()->language, plr);		// 1 because we have 1 quest, and we want goodbye to function
-			plr->GetSession()->SendPacket(&data);
-			DEBUG_LOG( "WORLD"," Sent SMSG_QUESTGIVER_QUEST_DETAILS." );
-		}
-		else if (status == QMGR_QUEST_FINISHED)
+		if (status == QMGR_QUEST_FINISHED)
 		{
 			sQuestMgr.BuildOfferReward(&data, (*itr)->qst, qst_giver, 1, plr->GetSession()->language, plr);
 			plr->GetSession()->SendPacket(&data);
 			//ss
 			DEBUG_LOG( "WORLD"," Sent SMSG_QUESTGIVER_OFFER_REWARD." );
+		}
+		else if (status == QMGR_QUEST_CHAT || status == QMGR_QUEST_AVAILABLE)
+		{
+			sQuestMgr.BuildQuestDetails(&data, (*itr)->qst, qst_giver, 1, plr->GetSession()->language, plr); // 1 because we have 1 quest, and we want goodbye to function
+			plr->GetSession()->SendPacket(&data);
+			DEBUG_LOG( "WORLD","Sent SMSG_QUESTGIVER_QUEST_DETAILS." );
 		}
 		else if (status == QMGR_QUEST_NOT_FINISHED)
 		{
@@ -1625,7 +1625,7 @@ bool QuestMgr::OnActivateQuestGiver(Object* qst_giver, Player* plr)
 			DEBUG_LOG( "WORLD"," Sent SMSG_QUESTGIVER_REQUEST_ITEMS." );
 		}
 	}
-	else 
+	else
 	{
 		sQuestMgr.BuildQuestList(&data, qst_giver ,plr, plr->GetSession()->language);
 		plr->GetSession()->SendPacket(&data);
