@@ -28,21 +28,25 @@
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -401,7 +405,7 @@
     <ClInclude Include="..\..\src\WorldServer\Master.h" />
     <ClInclude Include="..\..\src\WorldServer\BaseConsole.h" />
     <ClInclude Include="..\..\src\WorldServer\ConsoleCommands.h" />
-    <ClInclude Include="..\..\src\WorldServer\AchievementDefines.h" />	
+    <ClInclude Include="..\..\src\WorldServer\AchievementDefines.h" />
     <ClInclude Include="..\..\src\WorldServer\AchievementInterface.h" />
     <ClInclude Include="..\..\src\WorldServer\AddonMgr.h" />
     <ClInclude Include="..\..\src\WorldServer\AIInterface.h" />
@@ -473,7 +477,7 @@
     <ClInclude Include="..\..\src\WorldServer\StrandOfTheAncients.h" />
     <ClInclude Include="..\..\src\WorldServer\TaxiMgr.h" />
     <ClInclude Include="..\..\src\WorldServer\TerrainMgr.h" />
-    <ClInclude Include="..\..\src\WorldServer\GuildDefines.h" />	
+    <ClInclude Include="..\..\src\WorldServer\GuildDefines.h" />
     <ClInclude Include="..\..\src\WorldServer\IsleOfConquest.h" />
     <ClInclude Include="..\..\src\WorldServer\TransporterHandler.h" />
     <ClInclude Include="..\..\src\WorldServer\Unit.h" />
