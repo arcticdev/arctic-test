@@ -1,0 +1,1 @@
+SUBDIRS = GossipScripts InstanceScripts ServerStatusPlugin SpellHandlers Common EventsScripts MiscScripts QuestScripts RaidsScripts
