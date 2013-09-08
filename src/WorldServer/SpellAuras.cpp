@@ -5002,7 +5002,7 @@ void Aura::SpellAuraProcTriggerDamage(bool apply)
 
 		ds.owner = (void*)this;
 		m_target->m_damageShields.push_back(ds);
-		DEBUG_LOG("Spell","registering dmg proc %u, school %u, flags %u, charges %u \n",ds.m_spellId,ds.m_school,ds.m_flags,m_spellProto->procCharges);
+		DEBUG_LOG("Spell","registering dmg proc %u, school %u, flags %u, charges %u ",ds.m_spellId,ds.m_school,ds.m_flags,m_spellProto->procCharges);
 	}
 	else
 	{
