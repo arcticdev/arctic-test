@@ -346,10 +346,10 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 						_player->GetItemInterface()->BuildInventoryChangeError(	_player->mTradeItems[Index], NULL, INV_ERR_CANNOT_TRADE_THAT);
 					else
 					{
-						//Remove from player
+						// Remove from player
 						pItem = _player->m_ItemInterface->SafeRemoveAndRetreiveItemByGuidRemoveStats(Guid, true);
 
-						//and add to pTarget
+						// and add to pTarget
 						if(pItem != NULL)
 						{
 							pItem->SetOwner(pTarget);
@@ -360,7 +360,7 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 							}
 						}
 
-						if(GetPermissionCount()>0 || pTarget->GetSession()->GetPermissionCount()>0)
+						if(GetPermissionCount() > 0 || pTarget->GetSession()->GetPermissionCount() > 0)
 							sGMLog.writefromsession(this, "trade item %s with %s (soulbound = %d)", _player->mTradeItems[Index]->GetProto()->Name1, pTarget->GetName());
 					}
 				}
@@ -387,12 +387,11 @@ void WorldSession::HandleAcceptTrade(WorldPacket & recv_data)
 
 						}
 
-						if(GetPermissionCount()>0 || pTarget->GetSession()->GetPermissionCount()>0)
+						if(GetPermissionCount() > 0 || pTarget->GetSession()->GetPermissionCount() > 0)
 							sGMLog.writefromsession(this, "trade item %s with %s", pTarget->mTradeItems[Index]->GetProto()->Name1, _player->GetName());
 					}
 				}
 			}
-
 
 			// Trade Gold
 			if(_player->mTradeGold)

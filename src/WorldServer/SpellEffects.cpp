@@ -4460,7 +4460,7 @@ void Spell::SpellEffectEnchantItem(uint32 i) // Enchant Item Permanent
 			}
 			else
 			{
-				//scale item_count down if total stack will be more than 20
+				// scale item_count down if total stack will be more than 20
 				if(add->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + item_count > 20)
 				{
 					uint32 item_count_filled;
@@ -6515,7 +6515,7 @@ void Spell::SpellEffectSummonObjectSlot(uint32 i)
 			GoSummon = NULL;
 		}
 	}
-	//create a new GoSummon
+	// create a new GoSummon
 	GoSummon = u_caster->GetMapMgr()->CreateGameObject( goi->ID );
 	if(GoSummon == NULL)
 		return;
@@ -7096,7 +7096,7 @@ void Spell::SpellEffectResurrectNew(uint32 i)
 
 	if(playerTarget->isAlive() || !playerTarget->IsInWorld())
 		return;
-	//resurr
+	// resurr
 	playerTarget->resurrector = p_caster->GetLowGUID();
 	playerTarget->m_resurrectHealth = damage;
 	playerTarget->m_resurrectMana = m_spellInfo->EffectMiscValue[i];
@@ -7131,9 +7131,8 @@ void Spell::SpellEffectTranformItem(uint32 i)
 
 	Item* it = objmgr.CreateItem(itemid,owner);
 	it->SetDurability(dur);
-	// additem
 
-	   // additem
+	// additem
 	result2 = owner->GetItemInterface()->AddItemToFreeSlot(it);
 	if(!result2) // should never get here
 	{
@@ -7532,7 +7531,7 @@ void Spell::SpellEffectCreateRandomItem(uint32 i) // Create Random Item
 	}
 	else
 	{
-		//scale item_count down if total stack will be more than 20
+		// scale item_count down if total stack will be more than 20
 		if(add->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + item_count > 20)
 		{
 			uint32 item_count_filled;

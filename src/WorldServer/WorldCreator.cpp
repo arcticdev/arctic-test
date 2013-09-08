@@ -123,7 +123,7 @@ void InstanceMgr::Shutdown()
 		if(m_maps[i] != NULL)
 		{
 			delete m_maps[i];
-			m_maps[i]=NULL;
+			m_maps[i] = NULL;
 		}
 	}
 
@@ -537,9 +537,7 @@ MapMgr* InstanceMgr::GetInstance(uint32 MapId, uint32 InstanceId)
 
 MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 {
-	MapInfo * inf = NULL;
-	inf = WorldMapInfoStorage.LookupEntry(mapid);
-
+	MapInfo* inf = WorldMapInfoStorage.LookupEntry(mapid);
 	ASSERT(inf != NULL && inf->type == INSTANCE_NULL);
 	ASSERT(mapid < NUM_MAPS && m_maps[mapid] != NULL);
 
@@ -553,6 +551,12 @@ MapMgr* InstanceMgr::_CreateInstance(uint32 mapid, uint32 instanceid)
 
 	// assign pointer
 	m_singleMaps[mapid] = ret;
+
+	if(ret->IsCollisionEnabled())
+	{
+		Log.Notice("CollisionMgr", "Map %03u has collision enabled.", mapid);
+
+	}
 	return ret;
 }
 

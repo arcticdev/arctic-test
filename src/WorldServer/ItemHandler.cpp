@@ -539,7 +539,7 @@ void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 		if(!pItem)
 			return;
 
-		if(_player->GetCurrentSpell() && _player->GetCurrentSpell()->i_caster==pItem)
+		if(_player->GetCurrentSpell() && _player->GetCurrentSpell()->i_caster == pItem)
 		{
 			_player->GetCurrentSpell()->i_caster = NULL;
 			_player->GetCurrentSpell()->cancel();
@@ -558,7 +558,7 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 	WorldPacket data;
 
 	AddItemResult result;
-	int8 SrcInvSlot, SrcSlot, error=0;
+	int8 SrcInvSlot, SrcSlot, error = 0;
 
 	if(!GetPlayer())
 		return;
@@ -617,7 +617,7 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 
 				offhandweapon = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND, false);
 				if( offhandweapon == NULL )
-					return;		// should never happen
+					return; // should never happen
 
 				if( !_player->GetItemInterface()->SafeAddItem(offhandweapon, result.ContainerSlot, result.Slot) )
 					if( !_player->GetItemInterface()->AddItemToFreeSlot(offhandweapon) )		// shouldn't happen either.
@@ -643,10 +643,10 @@ void WorldSession::HandleAutoEquipItemOpcode( WorldPacket & recv_data )
 
 				mainhandweapon = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_MAINHAND, false);
 				if( mainhandweapon == NULL )
-					return;		// should never happen
+					return; // should never happen
 
 				if( !_player->GetItemInterface()->SafeAddItem(mainhandweapon, result.ContainerSlot, result.Slot) )
-					if( !_player->GetItemInterface()->AddItemToFreeSlot(mainhandweapon) )		// shouldn't happen either.
+					if( !_player->GetItemInterface()->AddItemToFreeSlot(mainhandweapon) ) // shouldn't happen either.
 					{
 						mainhandweapon->Destructor();
 					}
@@ -1785,9 +1785,7 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket &recvPacket)
 	CHECK_PACKET_SIZE(recvPacket, 2);
 	OUT_DEBUG("WORLD: CMSG_AUTOSTORE_BANK_ITEM");
 
-	//WorldPacket data;
-
-	int8 SrcInvSlot, SrcSlot;//, error=0, slot=-1, specialbagslot=-1;
+	int8 SrcInvSlot, SrcSlot; // error=0, slot=-1, specialbagslot=-1;
 
 	if(!GetPlayer())
 		return;
@@ -1878,7 +1876,7 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 				ColorMatch=false;
 		}
 
-		if(gemguid)//add or replace gem
+		if(gemguid) // add or replace gem
 		{
 			Item* it=_player->GetItemInterface()->SafeRemoveAndRetreiveItemByGuid(gemguid,true);
 			if(!it)
@@ -1890,23 +1888,23 @@ void WorldSession::HandleInsertGemOpcode(WorldPacket &recvPacket)
 			if(!gp)
 				continue;
 			if(!(gp->SocketMask & TargetItem->GetProto()->Sockets[i].SocketColor))
-				ColorMatch=false;
+				ColorMatch = false;
 
 			if(!gp->EnchantmentID)//this is ok in few cases
 				continue;
 
-			if(EI)//replace gem
+			if(EI) // replace gem
 				TargetItem->RemoveEnchantment(2+i);//remove previous
-			else//add gem
+			else // add gem
 				FilledSlots++;
 
 			Enchantment = dbcEnchant.LookupEntry(gp->EnchantmentID);
 			if(Enchantment)
-				TargetItem->AddEnchantment(Enchantment, 0, true,apply,false,2+i);
+				TargetItem->AddEnchantment(Enchantment, 0, true, apply, false, 2+i);
 		}
 	}
 
-	//Add color match bonus
+	// Add color match bonus
 	if(TargetItem->GetProto()->SocketBonus)
 	{
 		if(ColorMatch && (FilledSlots==TargetItem->GetSocketsCount()))

@@ -2096,7 +2096,7 @@ bool AIInterface::showWayPoints(Player* pPlayer, bool Backwards)
 			data1 << pWayPoint->GetNewGUID();
 			pPlayer->GetSession()->SendPacket( &data1 );
 
-			//Cleanup
+			// Cleanup
 			pWayPoint->Destructor();
 		}
 	}

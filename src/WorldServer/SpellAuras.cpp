@@ -1716,10 +1716,10 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 					if(m_target->GetHealthPct() <= 25)
 						dmg *= 4;
 					break;
-				//mage talent ignite
+				// mage talent ignite
 				case 12654:
 				{
-					if(!pSpellId) //we need a parent spell and should always have one since it procs on it
+					if(!pSpellId) // we need a parent spell and should always have one since it procs on it
 						break;
 					SpellEntry * parentsp = NULL;
 					parentsp = dbcSpell.LookupEntry(pSpellId);
@@ -1735,12 +1735,11 @@ void Aura::SpellAuraPeriodicDamage(bool apply)
 						Spell* spelld = NULL;
 						spelld = (new Spell(m_caster, parentsp ,false,NULL));
 						SpellCastTargets targets(m_target->GetGUID());
-						//this is so not good, maybe parent spell has more then dmg effect and we use it to calculate our new dmg :(
+						// this is so not good, maybe parent spell has more then dmg effect and we use it to calculate our new dmg :(
 						dmg = 0;
-						for(int i=0;i<3;i++)
+						for(int i = 0; i < 3; i++)
 						{
-						  //dmg +=parentsp->EffectBasePoints[i]*m_spellProto->EffectBasePoints[0];
-							dmg +=spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULL)*parentsp->EffectBasePoints[0]/100;
+							dmg += spelld->CalculateEffect(i,m_target->IsUnit()? TO_UNIT(m_target):NULL)*parentsp->EffectBasePoints[0]/100;
 						}
 						spelld->Destructor();
 					}
@@ -4421,9 +4420,9 @@ void Aura::SpellAuraModIncreaseHealth(bool apply)
 			m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
 		else
 		{
-			if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH)>-amt)//watch it on remove value is negative
+			if((int32)m_target->GetUInt32Value(UNIT_FIELD_HEALTH)>-amt) // watch it on remove value is negative
 				m_target->ModUnsigned32Value(UNIT_FIELD_HEALTH,amt);
-			else m_target->SetUInt32Value(UNIT_FIELD_HEALTH,1); //do not kill player but do strip him good
+			else m_target->SetUInt32Value(UNIT_FIELD_HEALTH,1); // do not kill player but do strip him good
 		}
 		TO_PLAYER( m_target )->SetHealthFromSpell(TO_PLAYER( m_target )->GetHealthFromSpell() + amt);
 		TO_PLAYER( m_target )->UpdateStats();
@@ -6607,9 +6606,6 @@ void Aura::SpellAuraChannelDeathItem(bool apply)
 							item->Destructor();
 							return;
 						}
-						/*WorldPacket data(45);
-						pCaster->GetSession()->BuildItemPushResult(&data, pCaster->GetGUID(), 1, 1, itemid ,0,0xFF,1,0xFFFFFFFF);
-						pCaster->SendMessageToSet(&data, true);					*/
 						SlotResult * lr = pCaster->GetItemInterface()->LastSearchResult();
 						pCaster->GetSession()->SendItemPushResult(item,true,false,true,true,lr->ContainerSlot,lr->Slot,1);
 					}

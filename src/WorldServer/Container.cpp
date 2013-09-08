@@ -48,7 +48,7 @@ void Container::Destructor()
 
 void Container::LoadFromDB( Field*fields )
 {
-	uint32 itemid=fields[2].GetUInt32();
+	uint32 itemid = fields[2].GetUInt32();
 	m_itemProto = ItemPrototypeStorage.LookupEntry( itemid );
 
 	ASSERT(m_itemProto);

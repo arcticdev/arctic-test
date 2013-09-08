@@ -1286,13 +1286,19 @@ void ObjectMgr::CorpseCollectorUnload()
 	_corpseslock.Acquire();
 	for (itr = m_corpses.begin(); itr != m_corpses.end();)
 	{
-		Corpse* c =itr->second;
+		Corpse* c = itr->second;
 		++itr;
-		if(c->IsInWorld())
-			c->RemoveFromWorld(false);
-
-		c->Destructor();
-		c = NULL;
+		if(c->IsVehicle())
+		{
+			TO_VEHICLE(c)->SafeDelete();
+		}
+		else
+		{
+			if(c->IsInWorld())
+				c->RemoveFromWorld(false);
+				RemoveCorpse(c);
+				c = NULL;
+		}
 	}
 	m_corpses.clear();
 	_corpseslock.Release();

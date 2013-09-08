@@ -534,7 +534,7 @@ void WorldSession::HandleQuestgiverCompleteQuestOpcode( WorldPacket & recvPacket
 	uint32 status = 0;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_UNIT)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -628,7 +628,7 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 	Object* qst_giver = NULL;
 	uint32 guidtype = GET_TYPE_FROM_GUID(guid);
 
-	if(guidtype==HIGHGUID_TYPE_UNIT)
+	if(guidtype == HIGHGUID_TYPE_UNIT)
 	{
 		Creature* quest_giver = _player->GetMapMgr()->GetCreature(GET_LOWGUID_PART(guid));
 		if(quest_giver)
@@ -677,14 +677,13 @@ void WorldSession::HandleQuestgiverChooseRewardOpcode(WorldPacket& recvPacket)
 		return;
 	}
 
-	//check for room in inventory for all items
+	// check for room in inventory for all items
 	if(!sQuestMgr.CanStoreReward(_player,qst,reward_slot))
 	{
 		sQuestMgr.SendQuestFailed(FAILED_REASON_INV_FULL, qst, _player);
 		return;
 	}
 
-	
 	sQuestMgr.OnQuestFinished(_player, qst, qst_giver, reward_slot);
 
 	if(qst->next_quest_id)

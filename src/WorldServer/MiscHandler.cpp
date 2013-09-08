@@ -15,7 +15,7 @@ void WorldSession::HandleRepopRequestOpcode( WorldPacket & recv_data )
 	if(_player->m_CurrentVehicle)
 		_player->m_CurrentVehicle->RemovePassenger(_player);
 
-	  GetPlayer()->RepopRequestedPlayer();
+	GetPlayer()->RepopRequestedPlayer();
 }
 
 void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
@@ -127,11 +127,11 @@ void WorldSession::HandleAutostoreLootItemOpcode( WorldPacket & recv_data )
 		add->SetCount(add->GetUInt32Value(ITEM_FIELD_STACK_COUNT) + amt);
 		add->m_isDirty = true;
 
-		sQuestMgr.OnPlayerItemPickup(GetPlayer(),add);
+		sQuestMgr.OnPlayerItemPickup(GetPlayer(), add);
 		_player->GetSession()->SendItemPushResult(add, false, true, true, false, _player->GetItemInterface()->GetBagSlotByGuid(add->GetGUID()), 0xFFFFFFFF, amt);
 	}
 
-	//in case of ffa_loot update only the player who recives it.
+	// in case of ffa_loot update only the player who recives it.
 	if (!pLootObj->m_loot.items.at(lootSlot).ffa_loot)
 	{
 		pLootObj->m_loot.items.at(lootSlot).iItemsCount = 0;
@@ -316,17 +316,17 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 
 		pGO->m_loot.looters.erase(_player->GetLowGUID());
         switch( pGO->GetByte(GAMEOBJECT_BYTES_1, 1) )
-        {
-        case GAMEOBJECT_TYPE_FISHINGNODE:
-            {
-		        if(pGO->IsInWorld())
-			    {
-				    pGO->RemoveFromWorld(true);
-			    }
-			    pGO->Destructor();
-            }break;
-        case GAMEOBJECT_TYPE_CHEST:
-            {
+		{
+		case GAMEOBJECT_TYPE_FISHINGNODE:
+			{
+				if(pGO->IsInWorld())
+				{
+					pGO->RemoveFromWorld(true);
+				}
+				pGO->Destructor();
+			}break;
+		case GAMEOBJECT_TYPE_CHEST:
+			{
                 pGO->m_loot.looters.erase( _player->GetLowGUID() );
                 //check for locktypes
 
@@ -359,11 +359,11 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 										return;
                                     }
                                     else
-                                    {
+									{
     									pGO->CalcMineRemaining( true );
 										pGO->Despawn( 600000 + ( RandomUInt( 180000 ) ) );
 										return;
-                                    }
+									}
                                 }
                                 else //other type of locks that i dont bother to split atm ;P
                                 {
@@ -408,7 +408,7 @@ void WorldSession::HandleLootReleaseOpcode( WorldPacket & recv_data )
 			        }
 
 
-			        pGO->Despawn(DespawnTime);
+					pGO->Despawn(DespawnTime);
 
                 }
             }
@@ -1945,11 +1945,11 @@ void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
 	|------------------------------------------------|----------------|
 	|00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
 	|------------------------------------------------|----------------|
-	|11 4D 0B 00 BD 06 01 F0 00 00 00 00 02		  |.M...........   |
+	|11 4D 0B 00 BD 06 01 F0 00 00 00 00 02          |.M...........   |
 	-------------------------------------------------------------------
 
 	uint64 creatureguid
-	uint21 slotid
+	uint32 slotid
 	uint8  choice
 
 	*/
@@ -2308,6 +2308,11 @@ void WorldSession::HandleGameobjReportUseOpCode( WorldPacket& recv_data )
 	uint64 guid;
 	recv_data >> guid;
 	GameObject* gameobj = _player->GetMapMgr()->GetGameObject(GET_LOWGUID_PART(guid));
+	if(gameobj != NULL)
+	{
+		if(gameobj->CanActivate())
+			sQuestMgr.OnGameObjectActivate(_player, gameobj);
+	}
 }
 
 void WorldSession::HandleReadyForAccountDataTimes(WorldPacket& recv_data)

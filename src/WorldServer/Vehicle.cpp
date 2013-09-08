@@ -13,21 +13,18 @@ Vehicle::Vehicle(uint64 guid) : Creature(guid)
 	m_maxPassengers = 0;
 	m_seatSlotMax = 0;
 	memset( m_vehicleSeats, 0, sizeof(uint32)*8 );
+	memset( m_passengers, 0, sizeof(Player*)*8 );
 	m_isVehicle = true;
 	Initialised = false;
 	m_CreatedFromSpell = false;
 	m_mountSpell = 0;
 
 	for(uint8 i = 0; i < 8; ++i)
-	{
 		seatisusable[i] = false;
-		m_vehicleSeats[i] = NULL;
-		m_passengers[i] = NULL;
-	}
 }
 
 Vehicle::~Vehicle()
-{
+{	
 	m_passengerCount = 0;
 	if( IsInWorld() )
 		RemoveFromWorld(false, true);
@@ -183,11 +180,14 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 	data << uint16(0);
 	data << uint32(0);
 	data << uint32(0x00000101);
+	uint8 count;
 
 	// Send the actionbar
 	for(uint8 i = 0; i < 6; ++i)
 	{
 		data << uint16(acc->VehicleSpells[i]) << uint8(0) << uint8(i+8);
+		if(acc->VehicleSpells[i])
+			count = i;
 	}
 	for(uint8 i = 6; i < 10; ++i)
 	{
@@ -242,11 +242,14 @@ void Vehicle::SafeDelete()
 {
 	for(int i = 0; i < 8; ++i)
 	{
-		if(!m_passengers[i])
-			continue;
-
-		// Remove any passengers
-		RemovePassenger(m_passengers[i]);
+		if(m_passengers[i] != NULL)
+		{
+			if(m_passengers[i]->IsPlayer())
+				// Remove any passengers
+				RemovePassenger(m_passengers[i]);
+			else
+				delete m_passengers[i];
+		}
 	}
 
 	sEventMgr.RemoveEvents(this);
@@ -373,7 +376,7 @@ uint8 Vehicle::GetPassengerSlot(Unit* pPassenger)
 
 void Vehicle::RemovePassenger(Unit* pPassenger)
 {
-	if(!pPassenger) // We have enough problems that we need to do this :(
+	if(pPassenger == NULL) // We have enough problems that we need to do this :(
 		return;
 
 	Vehicle* pThis = TO_VEHICLE(this);
@@ -492,7 +495,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	//Well actually this is how blizz wanted it
 	//but they couldnt get it to work xD
 	bool haspassengers = false;
-	for(uint8 i = 0; i < m_seatSlotMax; i++)
+	for(uint8 i = 0; i < m_seatSlotMax; ++i)
 	{
 		if(m_passengers[i] != NULL)
 		{
@@ -627,7 +630,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			data << GetNewGUID() << uint8(1);
 			pPlayer->GetSession()->SendPacket(&data);
 
-			pPlayer->m_CurrentCharm = TO_VEHICLE(this);
+			pPlayer->m_CurrentCharm = TO_UNIT(this);
 			pPlayer->SetUInt64Value(UNIT_FIELD_CHARM, GetGUID());
 			SetCharmTempVal(GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));
 			SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, pPlayer->GetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE));

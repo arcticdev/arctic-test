@@ -131,7 +131,7 @@ public:
 	ARCTIC_INLINE void SetInfo(GameObjectInfo * goi) { pInfo = goi; }
 
 	bool CreateFromProto(uint32 entry,uint32 mapid, float x, float y, float z, float ang, float orientation1, float orientation2, float orientation3, float orientation4);
-   
+
 	bool Load(GOSpawn *spawn);
 
 	virtual void Update(uint32 p_time);

@@ -103,22 +103,22 @@ void WarsongGulch::HookOnAreaTrigger(Player* plr, uint32 id)
 	int32 buffslot = -1;
 	switch(id)
 	{
-	case 3686:	  // Speed
+	case 3686: // Speed
 		buffslot = 0;
 		break;
-	case 3687:	  // Speed (Horde)
+	case 3687: // Speed (Horde)
 		buffslot = 1;
 		break;
-	case 3706:	  // Restoration
+	case 3706: // Restoration
 		buffslot = 2;
 		break;
-	case 3708:	  // Restoration (Horde)
+	case 3708: // Restoration (Horde)
 		buffslot = 3;
 		break;
-	case 3707:	  // Berserking
+	case 3707: // Berserking
 		buffslot = 4;
 		break;
-	case 3709:	  // Berserking (Horde)
+	case 3709: // Berserking (Horde)
 		buffslot = 5;
 		break;
 	}

@@ -1521,7 +1521,6 @@ void WorldSession::HandleGuildBankDepositItem(WorldPacket & recv_data)
 				/* this *really* shouldn't happen. */
 				if(!_player->GetItemInterface()->AddItemToFreeSlot(pDestItem))
 				{
-					//pDestItem->DeleteFromDB();
 					pDestItem->Destructor();
 				}
 			}

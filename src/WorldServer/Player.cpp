@@ -6526,7 +6526,7 @@ void Player::ResetTitansGrip()
 		if(titanGrip != NULL)
 		offhand = GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(INVENTORY_SLOT_NOT_SET, EQUIPMENT_SLOT_OFFHAND, false);
 		if( offhand == NULL )
-			return;     // should never happen
+			return; // should never happen
 		SlotResult result = GetItemInterface()->FindFreeInventorySlot(offhand->GetProto());
 		if( !result.Result )
 		{
@@ -6538,10 +6538,12 @@ void Player::ResetTitansGrip()
 			offhand->Destructor();
 		}
 		else if( !GetItemInterface()->SafeAddItem(offhand, result.ContainerSlot, result.Slot) )
-			if( !GetItemInterface()->AddItemToFreeSlot(offhand) )   // shouldn't happen either.
+		{
+			if( !GetItemInterface()->AddItemToFreeSlot(offhand) ) // shouldn't happen either.
 			{
 				offhand->Destructor();
 			}
+		}
 	}
 }
 

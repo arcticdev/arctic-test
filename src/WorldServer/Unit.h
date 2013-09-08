@@ -913,7 +913,7 @@ class SERVER_DECL Unit : public Object
 public:
 	void CombatStatusHandler_UpdateTargets();
 
-	virtual ~Unit ( );
+	virtual ~Unit();
 	virtual void Destructor();
 	virtual void Init();
 
@@ -924,7 +924,7 @@ public:
 	virtual void RemoveFromWorld(bool free_guid);
 	virtual void OnPushToWorld();
 
-    void setAttackTimer(int32 time, bool offhand);
+	void setAttackTimer(int32 time, bool offhand);
 	bool isAttackReady(bool offhand);
 	bool ARCTIC_FASTCALL canReachWithAttack(Unit* pVictim);
 
