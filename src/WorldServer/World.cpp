@@ -141,8 +141,8 @@ World::~World()
 	for(list<SpellEntry*>::iterator itr = dummyspells.begin(); itr != dummyspells.end(); itr++)
 		delete *itr;
 
-	Log.Notice("DBCs", "FreeDBCs()");
-	FreeDBCs();
+	// Log.Notice("DBCs", "FreeDBCs()");
+	// FreeDBCs();
 }
 
 void World::Destructor()

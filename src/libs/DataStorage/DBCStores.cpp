@@ -256,11 +256,7 @@ bool LoadDBCs()
 	return true;
 }
 
-void FreeRSDBCs()
-{
-	dbcArea.Cleanup();
-	dbcChatChannels.Cleanup();
-}
+/*
 
 void FreeDBCs()
 {
@@ -326,4 +322,4 @@ void FreeDBCs()
 	dbcQuestXP.Cleanup();
 	dbcWMOAreaTable.Cleanup();
 	dbcDestructibleModelData.Cleanup();
-}
+}*/

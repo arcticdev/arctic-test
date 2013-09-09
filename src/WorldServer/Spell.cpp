@@ -1403,7 +1403,7 @@ void Spell::cast(bool check)
 						float tmpDistance = m_caster->CalcDistance(pTmpTarget);
 						float tmpTime = ( tmpDistance * 1000.0f ) / m_spellInfo->speed;
 
-						DEBUG_LOG("Spell projectile","dist: %.5f, time: %u speed: %f\n", tmpDistance, tmpTime, m_spellInfo->speed);
+						DEBUG_LOG("Spell projectile","dist: %.5f, time: %u speed: %f", tmpDistance, tmpTime, m_spellInfo->speed);
 
 						if( tmpTime > 100.0f )
 						{

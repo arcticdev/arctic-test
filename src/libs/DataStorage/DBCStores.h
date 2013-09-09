@@ -1773,6 +1773,4 @@ extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDa
 
 bool LoadDBCs();
 bool LoadRSDBCs();
-void FreeRSDBCs();
-void FreeDBCs();
-
+//void FreeDBCs();
