@@ -1,6 +1,6 @@
 /*
  * Arctic MMORPG Server Software
- * Copyright (c) 2008-2012 Arctic Server Team
+ * Copyright (c) 2008-2014 Arctic Server Team
  * See COPYING for license details.
  */
 
@@ -219,7 +219,7 @@ struct MapInfo
 	float update_distance;
 	uint32 checkpoint_id;
 	bool collision;
-//	bool cluster_loads_map;		//When the clustering is active
+//	bool cluster_loads_map;		// When the clustering is active
 
 	bool HasFlag(uint32 flag)
 	{
@@ -642,7 +642,7 @@ public:
 	static uint32 m_CEThreshold;
 	static float m_wallhackthreshold;
 
-	// Кик игроков с большим пингом
+	// кик игроков с большим пингом
 	bool LatencyKickEnabled;
 	uint32 LatencyKickMax;
 	uint32 LatencyTimer;
