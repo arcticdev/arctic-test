@@ -249,7 +249,6 @@ static unsigned long WINAPI thread_proc(void* param)
 	uint32 tid = t->ControlInterface.GetId();
 	bool ht = (t->ExecutionTarget != NULL);
 	t->SetupMutex.Release();
-	//DEBUG_LOG("ThreadPool", "Thread %u started.", t->ControlInterface.GetId());
 
 	for(;;)
 	{

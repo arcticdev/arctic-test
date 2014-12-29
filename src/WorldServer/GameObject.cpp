@@ -811,11 +811,6 @@ void GameObject::TakeDamage(uint32 ammount)
 			}
 			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
 		}
-		/*else if(Health <= ((pInfo->SpellFocus + pInfo->sound5)*0.3) && Health > 0)
-		{
-			SetUInt32Value(GAMEOBJECT_DISPLAYID, disp->GetDisplayId(4)); // smoke
-			sHookInterface.OnDamageBuilding(TO_GAMEOBJECT(this));
-		}*/
 	}
 	else if(!HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DAMAGED) && !HasFlag(GAMEOBJECT_FLAGS,GO_FLAG_DESTROYED))
 	{

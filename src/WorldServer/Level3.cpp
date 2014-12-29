@@ -1158,6 +1158,7 @@ bool ChatHandler::HandleShowCheatsCommand(const char* args, WorldSession* m_sess
 	if(!plyr) return true;
 
 	uint32 active = 0, inactive = 0;
+
 #define print_cheat_status(CheatName, CheatVariable) SystemMessage(m_session, "%s%s: %s%s", MSG_COLOR_LIGHTBLUE, CheatName, \
 		CheatVariable ? MSG_COLOR_LIGHTRED : MSG_COLOR_GREEN, CheatVariable ? "Active" : "Inactive");  \
 		if(CheatVariable) \
@@ -2032,11 +2033,8 @@ bool ChatHandler::HandlePlayerInfo(const char* args, WorldSession * m_session)
 	}
 	WorldSession* sess = plr->GetSession();
 
-//	char* infos = new char[128];
-	static const char* classes[12] =
-	{"None","Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "None", "Druid"};
-	static const char* races[12] =
-	{"None","Human","Orc","Dwarf","Night Elf","Undead","Tauren","Gnome","Troll","None","Blood Elf","Draenei"};
+	static const char* classes[12] = {"None","Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "None", "Druid"};
+	static const char* races[12] = {"None","Human","Orc","Dwarf","Night Elf","Undead","Tauren","Gnome","Troll","None","Blood Elf","Draenei"};
 
 	char playedLevel[64];
 	char playedTotal[64];

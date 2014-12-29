@@ -390,7 +390,7 @@ void MapMgr::PushObject(Object* obj)
 		/* Add the map wide objects */
 		if(_mapWideStaticObjects.size())
 		{
-			for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+			for(set<Object*>::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
 			{
 				count = (*itr)->BuildCreateUpdateBlockForPlayer(&m_createBuffer, plObj);
 				plObj->PushCreationData(&m_createBuffer, count);
@@ -575,7 +575,7 @@ void MapMgr::RemoveObject(Object* obj, bool free_guid)
 		m_PlayerStorage.erase( TO_PLAYER( obj )->GetLowGUID() );
 
 		// Remove the session from our set if it is a player.
-		for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
+		for(set<Object*>::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); itr++)
 		{
 			plObj->PushOutOfRange((*itr)->GetNewGUID());
 		}
@@ -1296,7 +1296,7 @@ bool MapMgr::Do()
 	}
 
 	/* add static objects */
-	for(set<Object* >::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
+	for(set<Object*>::iterator itr = _mapWideStaticObjects.begin(); itr != _mapWideStaticObjects.end(); ++itr)
 		PushStaticObject(*itr);
 
 	/* load corpses */

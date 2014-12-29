@@ -31,7 +31,6 @@ ScriptMgr::ScriptMgr()
 
 ScriptMgr::~ScriptMgr()
 {
-
 }
 
 struct ScriptingEngine
@@ -546,7 +545,7 @@ void GossipScript::GossipHello(Object* pObject, Player* Plr, bool AutoSend)
 					msg += "priest";
 					break;
 				case CLASS_DEATHKNIGHT:
-					msg += "death knigh";
+					msg += "death knight";
 					break;
 				}
 			}

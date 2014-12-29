@@ -5636,7 +5636,7 @@ void Player::AddInRangeObject(Object* pObj)
 		{
 			WorldPacket data(SMSG_AURA_UPDATE_ALL, 28 * MAX_AURAS);
 			data << pUnit->GetNewGUID();
-			for (uint32 i = 0; i<MAX_AURAS; ++i)
+			for (uint32 i = 0; i < MAX_AURAS; ++i)
 			{
 				aur = pUnit->m_auras[i];
 				if (aur != NULL)

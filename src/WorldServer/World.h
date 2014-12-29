@@ -489,7 +489,6 @@ public:
 	uint32 HordePlayers;
 	uint32 AlliancePlayers;
 	uint32 PeakSessionCount;
-	bool SendStatsOnJoin;
 	SessionSet gmList;
 	RWLock gmList_lock;
 

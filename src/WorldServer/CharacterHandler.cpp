@@ -112,7 +112,7 @@ void WorldSession::CharacterEnumProc(QueryResult * result)
 
 	m_asyncQuery = false;
 
-	//Erm, reset it here in case player deleted his DK.
+	// Erm, reset it here in case player deleted his DK.
 	m_hasDeathKnight= false;
 
 	// should be more than enough.. 200 bytes per char..
@@ -326,7 +326,7 @@ void WorldSession::HandleCharCreateOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	//reserved for console whisper
+	// reserved for console whisper
 	if(name == "Console" ||  name == "console")
 	{
 		OutPacket(SMSG_CHAR_CREATE, 1, "\x32");
@@ -859,21 +859,8 @@ void WorldSession::FullLogin(Player* plr)
 	// send friend list (for ignores)
 	_player->Social_SendFriendList(7);
 
-	// Send revision (if enabled)
-#ifdef WIN32
-	// _player->BroadcastMessage("Core server: ArcTic %s r%u/%s-Windows-%s (www.github.com/arcticdev)", MSG_COLOR_WHITE, BUILD_TAG, BUILD_REVISION, CONFIG, ARCH, MSG_COLOR_LIGHTBLUE);
-#else
-	// _player->BroadcastMessage("Core server: ArcTic %s r%u/%s-%s (www.github.com/arcticdev)", MSG_COLOR_WHITE, BUILD_TAG, BUILD_REVISION, PLATFORM_TEXT, ARCH, MSG_COLOR_LIGHTBLUE);
-#endif
 	// Bugs
 	_player->BroadcastMessage("Bugs: %s%s", MSG_COLOR_LIGHTBLUE, BUG_TRACKER);
-
-	if(sWorld.SendStatsOnJoin)
-	{
-		_player->BroadcastMessage("Online Players: %s%u |rPeak: %s%u|r Accepted Connections: %s%u",
-			MSG_COLOR_WHITE, sWorld.GetSessionCount(), MSG_COLOR_WHITE, sWorld.PeakSessionCount, MSG_COLOR_WHITE, sWorld.mAcceptedConnections);
-		_player->BroadcastMessage("Server Uptime: |r%s", sWorld.GetUptimeString().c_str());
-	}
 
 	// send to gms
 	if(HasGMPermissions())
