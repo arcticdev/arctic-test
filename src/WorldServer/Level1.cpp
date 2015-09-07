@@ -166,12 +166,6 @@ bool ChatHandler::HandleAddInvItemCommand(const char *args, WorldSession *m_sess
 	{
 		sGMLog.writefromsession(m_session, "used add item command, item id %u [%s] to %s", it->ItemId, it->Name1, chr->GetName());
 
-		if(!chr->GetItemInterface()->AddItemById(itemid, count, randomprop, false, m_session->GetPlayer()))
-		{
-			m_session->SendNotification("No free slots were found in your inventory!");
-			return true;
-		}
-
 		Item* item;
 		item = objmgr.CreateItem( itemid, chr);
 		item->SetUInt32Value(ITEM_FIELD_STACK_COUNT, ((count > it->MaxCount) ? it->MaxCount : count));

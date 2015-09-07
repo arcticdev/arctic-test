@@ -71,12 +71,11 @@ public:
 	AddItemResult AddItemToFreeBankSlot(Item* item);
 	
 	/* Finds a stack that didn't reach max capacity
-	 * itemid The entry of the item to search for
-	 * cnt The item count you wish to add to the stack
-	 * IncBank Should this search the player's bank as well?
-	 * An Item* to a stack of itemid which can contain cnt more items
-	 */
-
+	\param itemid The entry of the item to search for
+	\param cnt The item count you wish to add to the stack
+	\param IncBank Should this search the player's bank as well?
+	\return An Item* to a stack of itemid which can contain cnt more items
+	*/
 	Item* FindItemLessMax(uint32 itemid, uint32 cnt, bool IncBank);
 	uint32 GetItemCount(uint32 itemid, bool IncBank = false);
 	uint32 RemoveItemAmt(uint32 id, uint32 amt);
@@ -138,8 +137,6 @@ public:
 			
 		return true;
 	}
-
-	bool AddItemById(uint32 itemid, uint32 count, int32 randomprop, bool created, Player* creator = NULL);
 
 	ARCTIC_INLINE bool VerifyBagSlotsWithBank(uint8 ContainerSlot, uint8 Slot)
 	{

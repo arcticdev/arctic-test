@@ -6,7 +6,7 @@
 
 #include "StdAfx.h"
 
-initialiseSingleton( TaxiMgr );
+initialiseSingleton(TaxiMgr);
 
 /************************
  *      TaxiPath        *
@@ -16,9 +16,9 @@ void TaxiPath::ComputeLen()
 {
 	m_length1 = m_length1 = 0;
 	m_map1 = m_map2 = 0;
-	float * curptr = &m_length1;
+	float* curptr = &m_length1;
 
-	if (!m_pathNodes.size())
+	if(!m_pathNodes.size())
 		return;
 
 	std::map<uint32, TaxiPathNode*>::iterator itr;
@@ -32,61 +32,58 @@ void TaxiPath::ComputeLen()
 
 	++itr;
 
-	while (itr != m_pathNodes.end())
+	while(itr != m_pathNodes.end())
 	{
-		if( itr->second->mapid != curmap )
+		if(itr->second->mapid != curmap)
 		{
 			curptr = &m_length2;
 			m_map2 = itr->second->mapid;
 			curmap = itr->second->mapid;
 		}
 
-		*curptr += sqrt((itr->second->x - x)*(itr->second->x - x) +
-			(itr->second->y - y)*(itr->second->y - y) +
-			(itr->second->z - z)*(itr->second->z - z));
+		*curptr += sqrt((itr->second->x - x) * (itr->second->x - x) + (itr->second->y - y) * (itr->second->y - y) + (itr->second->z - z) * (itr->second->z - z));
 
 		x = itr->second->x;
 		y = itr->second->y;
 		z = itr->second->z;
-		++itr;
+		itr++;
 	}
 }
 
-void TaxiPath::SetPosForTime(float &x, float &y, float &z, uint32 time, uint32 *last_node, uint32 mapid)
+void TaxiPath::SetPosForTime(float & x, float & y, float & z, uint32 time, uint32* last_node, uint32 mapid)
 {
-	if (!time)
+	if(!time)
 		return;
 
 	float length;
-	if( mapid == m_map1 )
+	if(mapid == m_map1)
 		length = m_length1;
 	else
 		length = m_length2;
 
-	float traveled_len = (time/(length * TAXI_TRAVEL_SPEED))*length;
+	float traveled_len = (time / (length * TAXI_TRAVEL_SPEED)) * length;
 	uint32 len = 0;
 
 	x = 0;
 	y = 0;
 	z = 0;
 
-	if (!m_pathNodes.size())
+	if(!m_pathNodes.size())
 		return;
 
 	std::map<uint32, TaxiPathNode*>::iterator itr;
 	itr = m_pathNodes.begin();
 
-	float nx = 0.0f;
-	float ny = 0.0f;
-	float nz = 0.0f;
+	float nx, ny, nz;
+	nx = ny = nz = 0.0f;
 	bool set = false;
 	uint32 nodecounter = 0;
 
-	while (itr != m_pathNodes.end())
+	while(itr != m_pathNodes.end())
 	{
-		if( itr->second->mapid != mapid )
+		if(itr->second->mapid != mapid)
 		{
-			++itr;
+			itr++;
 			nodecounter++;
 			continue;
 		}
@@ -100,14 +97,13 @@ void TaxiPath::SetPosForTime(float &x, float &y, float &z, uint32 time, uint32 *
 			continue;
 		}
 
-		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) + (itr->second->y - ny)*(itr->second->y - ny) +
-			(itr->second->z - nz)*(itr->second->z - nz));
+		len = (uint32)sqrt((itr->second->x - nx) * (itr->second->x - nx) + (itr->second->y - ny) * (itr->second->y - ny) + (itr->second->z - nz) * (itr->second->z - nz));
 
-		if (len >= traveled_len)
+		if(len >= traveled_len)
 		{
-			x = (itr->second->x - nx)*(traveled_len/len) + nx;
-			y = (itr->second->y - ny)*(traveled_len/len) + ny;
-			z = (itr->second->z - nz)*(traveled_len/len) + nz;
+			x = (itr->second->x - nx) * (traveled_len / len) + nx;
+			y = (itr->second->y - ny) * (traveled_len / len) + ny;
+			z = (itr->second->z - nz) * (traveled_len / len) + nz;
 			*last_node = nodecounter;
 			return;
 		}
@@ -119,7 +115,7 @@ void TaxiPath::SetPosForTime(float &x, float &y, float &z, uint32 time, uint32 *
 		nx = itr->second->x;
 		ny = itr->second->y;
 		nz = itr->second->z;
-		++itr;
+		itr++;
 		nodecounter++;
 	}
 
@@ -130,7 +126,7 @@ void TaxiPath::SetPosForTime(float &x, float &y, float &z, uint32 time, uint32 *
 
 TaxiPathNode* TaxiPath::GetPathNode(uint32 i)
 {
-	if (m_pathNodes.find(i) == m_pathNodes.end())
+	if(m_pathNodes.find(i) == m_pathNodes.end())
 		return NULL;
 	else
 		return m_pathNodes.find(i)->second;
@@ -138,37 +134,36 @@ TaxiPathNode* TaxiPath::GetPathNode(uint32 i)
 
 void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 {
-	if (!time)
+	if(!time)
 		return;
 
 	float length;
 	uint32 mapid = riding->GetMapId();
-	if( mapid == m_map1 )
+	if(mapid == m_map1)
 		length = m_length1;
 	else
 		length = m_length2;
 
-	float traveled_len = (time/(length * TAXI_TRAVEL_SPEED))*length;
+	float traveled_len = (time / (length * TAXI_TRAVEL_SPEED)) * length;
 	uint32 len = 0;
-	float x = 0,y = 0,z = 0;
+	float x = 0, y = 0, z = 0;
 
-	if (!m_pathNodes.size())
+	if(!m_pathNodes.size())
 		return;
 
 	std::map<uint32, TaxiPathNode*>::iterator itr;
 	itr = m_pathNodes.begin();
 
-	float nx = 0.0f;
-	float ny = 0.0f;
-	float nz = 0.0f;
+	float nx, ny, nz;
+	nx = ny = nz = 0.0f;
 	bool set = false;
 	uint32 nodecounter = 1;
 
-	while (itr != m_pathNodes.end())
+	while(itr != m_pathNodes.end())
 	{
-		if( itr->second->mapid != mapid )
+		if(itr->second->mapid != mapid)
 		{
-			++itr;
+			itr++;
 			nodecounter++;
 			continue;
 		}
@@ -182,15 +177,13 @@ void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 			continue;
 		}
 
-		len = (uint32)sqrt((itr->second->x - nx)*(itr->second->x - nx) +
-			(itr->second->y - ny)*(itr->second->y - ny) +
-			(itr->second->z - nz)*(itr->second->z - nz));
+		len = (uint32)sqrt((itr->second->x - nx) * (itr->second->x - nx) + (itr->second->y - ny) * (itr->second->y - ny) + (itr->second->z - nz) * (itr->second->z - nz));
 
-		if (len >= traveled_len)
+		if(len >= traveled_len)
 		{
-			x = (itr->second->x - nx)*(traveled_len/len) + nx;
-			y = (itr->second->y - ny)*(traveled_len/len) + ny;
-			z = (itr->second->z - nz)*(traveled_len/len) + nz;
+			x = (itr->second->x - nx) * (traveled_len / len) + nx;
+			y = (itr->second->y - ny) * (traveled_len / len) + ny;
+			z = (itr->second->z - nz) * (traveled_len / len) + nz;
 			break;
 		}
 		else
@@ -201,30 +194,30 @@ void TaxiPath::SendMoveForTime(Player* riding, Player* to, uint32 time)
 		nx = itr->second->x;
 		ny = itr->second->y;
 		nz = itr->second->z;
-		++itr;
+		itr++;
 	}
 
-	if (itr == m_pathNodes.end())
+	if(itr == m_pathNodes.end())
 		return;
 
-	WorldPacket * data = new WorldPacket(SMSG_MONSTER_MOVE, 2000);
+	WorldPacket* data = new WorldPacket(SMSG_MONSTER_MOVE, 2000);
 	size_t pos;
 
 	*data << riding->GetNewGUID();
 	*data << uint8(0);
-	*data << riding->GetPositionX( ) << riding->GetPositionY( ) << riding->GetPositionZ( );
+	*data << riding->GetPositionX() << riding->GetPositionY() << riding->GetPositionZ();
 	*data << getMSTime();
-	*data << uint8( 0 );
-	*data << uint32( MONSTER_MOVE_FLAG_FLY );
-	*data << uint32( uint32((length * TAXI_TRAVEL_SPEED) - time));
-	*data << uint32( nodecounter );
+	*data << uint8(0);
+	*data << uint32(0x00003000);
+	*data << uint32(uint32((length * TAXI_TRAVEL_SPEED) - time));
+	*data << uint32(nodecounter);
 	pos = data->wpos();
 	*data << nx << ny << nz;
 
-	while (itr != m_pathNodes.end())
+	while(itr != m_pathNodes.end())
 	{
-		TaxiPathNode *pn = itr->second;
-		if( pn->mapid != mapid )
+		TaxiPathNode* pn = itr->second;
+		if(pn->mapid != mapid)
 			break;
 
 		*data << pn->x << pn->y << pn->z;
@@ -247,10 +240,10 @@ void TaxiMgr::_LoadTaxiNodes()
 
 	for(i = 0; i < dbcTaxiNode.GetNumRows(); i++)
 	{
-		DBCTaxiNode *node = dbcTaxiNode.LookupRow(i);
-		if (node)
+		DBCTaxiNode* node = dbcTaxiNode.LookupRow(i);
+		if(node)
 		{
-			TaxiNode *n = new TaxiNode;
+			TaxiNode* n = new TaxiNode;
 			n->id = node->id;
 			n->mapid = node->mapid;
 			n->alliance_mount = node->alliance_mount;
@@ -262,8 +255,6 @@ void TaxiMgr::_LoadTaxiNodes()
 			m_taxiNodes.insert(std::map<uint32, TaxiNode*>::value_type(n->id, n));
 		}
 	}
-
-	//todo: load mounts
 }
 
 void TaxiMgr::_LoadTaxiPaths()
@@ -272,11 +263,11 @@ void TaxiMgr::_LoadTaxiPaths()
 
 	for(i = 0; i < dbcTaxiPath.GetNumRows(); i++)
 	{
-		DBCTaxiPath *path = dbcTaxiPath.LookupRow(i);
+		DBCTaxiPath* path = dbcTaxiPath.LookupRow(i);
 
-		if (path)
+		if(path)
 		{
-			TaxiPath *p = new TaxiPath;
+			TaxiPath* p = new TaxiPath;
 			p->from = path->from;
 			p->to = path->to;
 			p->id = path->id;
@@ -285,13 +276,13 @@ void TaxiMgr::_LoadTaxiPaths()
 			//Load Nodes
 			for(j = 0; j < dbcTaxiPathNode.GetNumRows(); j++)
 			{
-				DBCTaxiPathNode *pathnode = dbcTaxiPathNode.LookupRow(j);
+				DBCTaxiPathNode* pathnode = dbcTaxiPathNode.LookupRow(j);
 
-				if (pathnode)
+				if(pathnode)
 				{
-					if (pathnode->path == p->id)
+					if(pathnode->path == p->id)
 					{
-						TaxiPathNode *pn = new TaxiPathNode;
+						TaxiPathNode* pn = new TaxiPathNode;
 						pn->x = pathnode->x;
 						pn->y = pathnode->y;
 						pn->z = pathnode->z;
@@ -313,7 +304,7 @@ TaxiPath* TaxiMgr::GetTaxiPath(uint32 path)
 
 	itr = m_taxiPaths.find(path);
 
-	if (itr == m_taxiPaths.end())
+	if(itr == m_taxiPaths.end())
 		return NULL;
 	else
 		return itr->second;
@@ -323,8 +314,8 @@ TaxiPath* TaxiMgr::GetTaxiPath(uint32 from, uint32 to)
 {
 	HM_NAMESPACE::hash_map<uint32, TaxiPath*>::iterator itr;
 
-	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
-		if ((itr->second->to == to) && (itr->second->from == from))
+	for(itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
+		if((itr->second->to == to) && (itr->second->from == from))
 			return itr->second;
 
 	return NULL;
@@ -336,13 +327,13 @@ TaxiNode* TaxiMgr::GetTaxiNode(uint32 node)
 
 	itr = m_taxiNodes.find(node);
 
-	if (itr == m_taxiNodes.end())
+	if(itr == m_taxiNodes.end())
 		return NULL;
 	else
 		return itr->second;
 }
 
-uint32 TaxiMgr::GetNearestTaxiNode( float x, float y, float z, uint32 mapid )
+uint32 TaxiMgr::GetNearestTaxiNode(float x, float y, float z, uint32 mapid)
 {
 	uint32 nearest = 0;
 	float distance = -1;
@@ -350,15 +341,15 @@ uint32 TaxiMgr::GetNearestTaxiNode( float x, float y, float z, uint32 mapid )
 
 	HM_NAMESPACE::hash_map<uint32, TaxiNode*>::iterator itr;
 
-	for (itr = m_taxiNodes.begin(); itr != m_taxiNodes.end(); itr++)
+	for(itr = m_taxiNodes.begin(); itr != m_taxiNodes.end(); itr++)
 	{
-		if (itr->second->mapid == mapid)
+		if(itr->second->mapid == mapid)
 		{
 			nx = itr->second->x - x;
 			ny = itr->second->y - y;
 			nz = itr->second->z - z;
 			nd = nx * nx + ny * ny + nz * nz;
-			if( nd < distance || distance < 0 )
+			if(nd < distance || distance < 0)
 			{
 				distance = nd;
 				nearest = itr->second->id;
@@ -369,17 +360,18 @@ uint32 TaxiMgr::GetNearestTaxiNode( float x, float y, float z, uint32 mapid )
 	return nearest;
 }
 
-bool TaxiMgr::GetGlobalTaxiNodeMask( uint32 curloc, uint32 *Mask )
+bool TaxiMgr::GetGlobalTaxiNodeMask(uint32 curloc, uint32* Mask)
 {
 	HM_NAMESPACE::hash_map<uint32, TaxiPath*>::iterator itr;
 	uint8 field;
 
-	for (itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
+	for(itr = m_taxiPaths.begin(); itr != m_taxiPaths.end(); itr++)
 	{
+
 		field = (uint8)((itr->second->to - 1) / 32);
 		if(field >= 12)
-			continue;
-		Mask[field] |= 1 << ( (itr->second->to - 1 ) % 32 );
+			continue; // The DBC can contain negative TO values??? That'll be 255 here (because we store everything unsigned), skip them!
+		Mask[field] |= 1 << ((itr->second->to - 1) % 32);
 	}
 
 	return true;

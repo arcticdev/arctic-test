@@ -29,7 +29,7 @@ const char * gItemPrototypeFormat             = "uuuussssuuuuuuuuuuuuuuuuuuuuuuu
 const char * gNpcTextFormat                   = "ufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuufssuuuuuuu";
 const char * gQuestFormat                     = "uuuuuuuuuuuuuuuuuuuussssssssssuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuc";
 const char * gTeleportCoordFormat             = "uxuffff";
-const char * gWorldMapInfoFormat              = "uuuuufffusuuuuuufub"; // The last bool(b) for Clustering
+const char * gWorldMapInfoFormat              = "uuuuufffusuuuuuuuufub"; // The last bool(b) for Clustering
 const char * gRandomItemCreationFormat        = "uuuu";
 const char * gRandomCardCreationFormat        = "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu";
 const char * gScrollCreationFormat            = "uu";
@@ -268,7 +268,7 @@ void ObjectMgr::LoadExtraCreatureProtoStuff()
 
 					case AGENT_FLEE:
 					{
-						// % health 
+						// % health
 						cn->m_canFlee = true;
 						cn->m_fleeHealth = (sp->floatMisc1 ? sp->floatMisc1 : 100.0f);	//if left to zero, start running inmeadetely
 						cn->m_fleeDuration = (sp->Misc2 ? sp->Misc2 : 10000);

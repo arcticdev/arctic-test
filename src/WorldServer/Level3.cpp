@@ -1055,12 +1055,6 @@ bool ChatHandler::HandleAddItemSetCommand(const char* args, WorldSession* m_sess
 	sGMLog.writefromsession(m_session, "used add item set command, set %u, target %s", setid, chr->GetName());
 	for(std::list<ItemPrototype*>::iterator itr = l->begin(); itr != l->end(); itr++)
 	{
-		if(!chr->GetItemInterface()->AddItemById((*itr)->ItemId, 1, 0, false, m_session->GetPlayer()))
-		{
-			m_session->SendNotification("No free slots left!");
-			return true;
-		}
-
 		Item* itm = objmgr.CreateItem((*itr)->ItemId, m_session->GetPlayer());
 		if(!itm) continue;
 		if(itm->GetProto()->Bonding == ITEM_BIND_ON_PICKUP)
@@ -1425,7 +1419,6 @@ if(!args || strlen(args) < 2)
 	return true;
 }
 
-
 #ifdef USE_SPECIFIC_AIAGENTS
 //this is custom stuff !
 bool ChatHandler::HandlePetSpawnAIBot(const char* args, WorldSession *m_session)
@@ -1754,7 +1747,6 @@ bool ChatHandler::HandleMassSummonCommand(const char* args, WorldSession* m_sess
 		plr = itr->second;
 		if(plr->GetSession() && plr->IsInWorld())
 		{
-			//plr->SafeTeleport(summoner->GetMapId(), summoner->GetInstanceID(), summoner->GetPosition());
 			/* let's do this the blizz way */
 			plr->SummonRequest(summoner, summoner->GetZoneId(), summoner->GetMapId(), summoner->GetInstanceID(), summoner->GetPosition());
 			++c;

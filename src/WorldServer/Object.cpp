@@ -2943,7 +2943,10 @@ void Object::CastSpell( Object* Target, SpellEntry* Sp, bool triggered )
 
 void Object::CastSpell( Object* Target, uint32 SpellID, bool triggered )
 {
-	CastSpell(Target, dbcSpell.LookupEntry(SpellID), triggered); // schnek: one null check should be more than enough, or? ;)
+	SpellEntry * ent = dbcSpell.LookupEntry(SpellID);
+	if(ent == 0) return;
+
+	CastSpell(Target, ent, triggered);
 }
 
 void Object::CastSpell( uint64 targetGuid, SpellEntry* Sp, bool triggered )
@@ -2956,7 +2959,10 @@ void Object::CastSpell( uint64 targetGuid, SpellEntry* Sp, bool triggered )
 	newSpell->prepare(&targets);
 }
 
-void Object::CastSpell( uint64 targetGuid, uint32 SpellID, bool triggered)
+void Object::CastSpell( uint64 targetGuid, uint32 SpellID, bool triggered )
 {
-	CastSpell(targetGuid, dbcSpell.LookupEntry(SpellID), triggered); // schnek: one null check should be more than enough, or? ;)
+	SpellEntry * ent = dbcSpell.LookupEntry(SpellID);
+	if(ent == 0) return;
+
+	CastSpell(targetGuid, ent, triggered);
 }

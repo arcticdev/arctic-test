@@ -174,7 +174,6 @@ public:
 	void SpellEffectEnergize(uint32 i);
 	void SpellEffectWeaponDmgPerc(uint32 i);
 	void SpellEffectTriggerMissile(uint32 i);
-	void SpellEffectOpenLock(uint32 i);
 	void SpellEffectApplyAA(uint32 i);
 	void SpellEffectLearnSpell(uint32 i);
 	void SpellEffectSpellDefense(uint32 i);

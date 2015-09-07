@@ -304,12 +304,10 @@ void WorldSession::HandleSwapItemOpcode(WorldPacket& recv_data)
 				if (!_player->GetItemInterface()->SafeAddItem(SrcItem, SrcInvSlot, SrcSlot))
 				{
 					SrcItem->Destructor();
-					SrcItem = NULL;
 				}
 				if (DstItem && !_player->GetItemInterface()->SafeAddItem(DstItem, DstInvSlot, DstSlot))
 				{
 					DstItem->Destructor();
-					DstItem = NULL;
 				}
 				return;
 			}
@@ -547,7 +545,6 @@ void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 
 		pItem->DeleteFromDB();
 		pItem->Destructor();
-		pItem = NULL;
 	}
 }
 
@@ -727,7 +724,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->Class;
 	data << itemProto->SubClass;
 	data << itemProto->unknown_bc;
-	 data << /*(li ? li->Name : */itemProto->Name1/*)*/;
+	data << itemProto->Name1;
 
 	data << uint8(0) << uint8(0) << uint8(0); // name 2,3,4
 	data << itemProto->DisplayInfoID;
@@ -1191,7 +1188,6 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 			if(!_player->GetItemInterface()->SafeAddItem(pItem, bagslot, slot))
 			{
 				pItem->Destructor();
-				pItem = NULL;
 				return;
 			}
 		}
@@ -1405,7 +1401,7 @@ void WorldSession::SendInventoryList(Creature* unit)
 	ItemPrototype * curItem;
 	uint32 counter = 0;
 
-	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); itr++)
+	for(std::vector<CreatureItem>::iterator itr = unit->GetSellItemBegin(); itr != unit->GetSellItemEnd(); ++itr)
 	{
 		if(itr->itemid && (itr->max_amount == 0 || (itr->max_amount>0 && itr->available_amount >0)))
 		{
@@ -1624,6 +1620,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 {
 	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recvPacket, 12);
+	CHECK_INWORLD_RETURN;
 	if(!GetPlayer())
 		return;
 
@@ -1644,7 +1641,7 @@ void WorldSession::HandleRepairItemOpcode(WorldPacket &recvPacket)
 
 	if( !itemguid )
 	{
-		for( i = 0; i < MAX_INVENTORY_SLOT; ++i )
+		for( i = 0; i < MAX_INVENTORY_SLOT; i++ )
 		{
 			pItem = _player->GetItemInterface()->GetInventoryItem( i );
 			if( pItem != NULL )

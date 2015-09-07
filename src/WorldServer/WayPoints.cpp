@@ -978,7 +978,6 @@ bool ChatHandler::HandleWPHideCommand(const char* args, WorldSession *m_session)
 bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_session)
 {
 	Creature* cr = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
-
 	if(!cr)
 	{
 		SystemMessage(m_session, "You should select a creature.");
@@ -1071,8 +1070,7 @@ bool ChatHandler::HandleGenerateWaypoints(const char* args, WorldSession * m_ses
 
 bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session)
 {
-	Creature* cr =
-		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
+	Creature* cr = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)return false;
 	if(!cr->GetSQL_id())
 		return false;
@@ -1084,8 +1082,7 @@ bool ChatHandler::HandleSaveWaypoints(const char* args, WorldSession * m_session
 
 bool ChatHandler::HandleDeleteWaypoints(const char* args, WorldSession * m_session)
 {
-	Creature* cr =
-		m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
+	Creature* cr = m_session->GetPlayer()->GetMapMgr()->GetCreature(GET_LOWGUID_PART(m_session->GetPlayer()->GetSelection()));
 	if(!cr)return false;
 	if(!cr->GetSQL_id())
 		return false;
@@ -1207,7 +1204,7 @@ bool ChatHandler::HandleNpcSelectCommand(const char * args, WorldSession * m_ses
 	float dist2;
 	Player* plr = m_session->GetPlayer();
 	unordered_set<Object*>::iterator itr;
-	for(itr = plr->GetInRangeSetBegin(); itr != plr->GetInRangeSetEnd(); itr++)
+	for(itr = plr->GetInRangeSetBegin(); itr != plr->GetInRangeSetEnd(); ++itr)
 	{
 		if( (dist2 = plr->GetDistance2dSq(*itr)) < dist && (*itr)->GetTypeId() == TYPEID_UNIT )
 		{

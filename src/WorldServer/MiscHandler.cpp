@@ -1982,7 +1982,7 @@ void WorldSession::HandleLootRollOpcode(WorldPacket& recv_data)
 	if(!li)
 		return;
 
-	li->PlayerRolled(_player, choice);
+	// li->PlayerRolled(_player, choice); N0000B!!111
 }
 
 void WorldSession::HandleOpenItemOpcode(WorldPacket &recv_data)

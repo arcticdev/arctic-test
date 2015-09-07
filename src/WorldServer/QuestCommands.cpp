@@ -610,7 +610,7 @@ bool ChatHandler::HandleQuestListCommand(const char * args, WorldSession * m_ses
 			SystemMessage(m_session, "Auto-targeting self.");
 		}
 
-		if(plr!=NULL)
+		if(plr != NULL)
 		{
 			if(plr->HasQuests())
 			{

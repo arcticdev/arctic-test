@@ -64,8 +64,6 @@ void Container::LoadFromDB( Field*fields )
 	SetUInt32Value( ITEM_FIELD_DURABILITY, fields[12].GetUInt32());
 
 	SetUInt32Value( CONTAINER_FIELD_NUM_SLOTS, m_itemProto->ContainerSlots);
-
-	Bind(ITEM_BIND_ON_PICKUP); // Check if we need to bind our shit.
 }
 
 void Container::Create( uint32 itemid, Player* owner )
@@ -132,7 +130,8 @@ bool Container::AddItem(int8 slot, Item* item)
 	item->SetUInt64Value(ITEM_FIELD_CONTAINED, GetGUID());
 	item->SetOwner(m_owner);
 
-	Bind(ITEM_BIND_ON_PICKUP);
+	if (item->GetProto()->Bonding == ITEM_BIND_ON_PICKUP) 
+		item->SoulBind();
 
 	SetUInt64Value(CONTAINER_FIELD_SLOT_1  + (slot*2), item->GetGUID());
 
@@ -249,7 +248,6 @@ bool Container::SafeFullRemoveItemFromSlot(int8 slot)
 	}
 	pItem->DeleteFromDB();
 	pItem->Destructor();
-	pItem = NULL;
 
 	return true;
 }

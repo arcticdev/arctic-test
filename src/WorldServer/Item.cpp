@@ -64,9 +64,12 @@ Item::~Item()
 	m_owner = NULL;
 }
 
-void Item::Destructor()
+void Item::DeleteMe()
 {
-	delete this;
+	if( IsContainer() )
+		delete TO_CONTAINER(this);
+	else
+		delete this;
 }
 
 void Item::Create( uint32 itemid, Player* owner )
@@ -136,8 +139,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	}
 
 	SetUInt32Value( ITEM_FIELD_FLAGS, fields[8].GetUInt32() );
-	Bind(ITEM_BIND_ON_PICKUP); // Check if we need to bind our shit.
-
 	random_prop = fields[9].GetUInt32();
 	random_suffix = fields[10].GetUInt32();
 
@@ -306,7 +307,7 @@ void Item::SaveToDB( int8 containerslot, int8 slot, bool firstsave, QueryBuffer*
 	if( Enchantments.size() > 0 )
 	{
 		EnchantmentMap::iterator itr = Enchantments.begin();
-		for(; itr != Enchantments.end(); itr++)
+		for(; itr != Enchantments.end(); ++itr)
 		{
 			if( itr->second.RemoveAtLogout )
 				continue;
@@ -963,7 +964,7 @@ void Item::RemoveRelatedEnchants( EnchantEntry* newEnchant )
 void Item::RemoveProfessionEnchant()
 {
 	EnchantmentMap::iterator itr;
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
 	{
 		if( itr->second.Duration != 0 )// not perm
 			continue;
@@ -979,7 +980,7 @@ void Item::RemoveSocketBonusEnchant()
 {
 	EnchantmentMap::iterator itr;
 
-	for( itr = Enchantments.begin(); itr != Enchantments.end(); ++itr )
+	for( itr = Enchantments.begin(); itr != Enchantments.end(); itr++ )
 	{
 		if( itr->second.Enchantment->Id == GetProto()->SocketBonus )
 		{
@@ -1032,7 +1033,7 @@ uint32 Item::GenerateRandomSuffixFactor( ItemPrototype* m_itemProto )
 //////////////////////////////////////////////////////////////////////////
 // Item Links
 //////////////////////////////////////////////////////////////////////////
-static const char *g_itemQualityColours[9] =
+static const char *g_itemQualityColours[7] =
 {
 	"|cff9d9d9d",		// Grey
 	"|cffffffff",		// White
@@ -1041,13 +1042,11 @@ static const char *g_itemQualityColours[9] =
 	"|cffa335ee",		// Purple
 	"|cffff8000",		// Orange
 	"|cffe6cc80",		// Artifact
-	"|cffe5cc80",		// Heirloom
-	"|cff00ffff",		// Gamemaster
 };
 
 string ItemPrototype::ConstructItemLink(uint32 random_prop, uint32 random_suffix, uint32 stack)
 {
-	if( Quality > 8 )
+	if( Quality > 6 )
 		return "INVALID_ITEM";
 
 	char buf[1000];

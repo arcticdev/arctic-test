@@ -113,7 +113,7 @@ public:
 
 	virtual void Update(uint32 time);
 
-	ARCTIC_INLINE uint32 GetXP(void) { return GetUInt32Value(UNIT_FIELD_PETEXPERIENCE); }
+	ARCTIC_INLINE uint32 GetXP(void) { return m_PetXP; }
 
 	void InitializeSpells();
 	void ReInitializeSpells();
@@ -199,11 +199,6 @@ public:
 	ARCTIC_INLINE PetSpellMap* GetSpells() { return &mSpells; }
 	ARCTIC_INLINE bool IsSummonedPet() { return Summon; }
 
-	bool IsWarlockPet()
-	{
-		return GetEntry() == 691 ? true : GetEntry() == 688 ? true : GetEntry() == 712 ? true : GetEntry() == 697 ? true : false;
-	}
-
 	void ARCTIC_FASTCALL SetAutoCastSpell(AI_Spell*sp);
 	void Rename(string NewName);
 	ARCTIC_INLINE string& GetName() { return m_name; }
@@ -212,7 +207,6 @@ public:
 	void HandleAutoCastEvent(uint32 Type);
 	AI_Spell*HandleAutoCastEvent();
 	void SetAutoCast(AI_Spell*sp, bool on);
-
 	/* Pet properties */
 	uint32 GetHappiness() { return GetUInt32Value(UNIT_FIELD_POWER5); };
 	void SetHappiness(float amount) { SetUInt32Value(UNIT_FIELD_POWER5, amount); };
@@ -231,6 +225,7 @@ public:
 
 protected:
 	Player* m_Owner;
+	uint32 m_PetXP;
 	PetSpellMap mSpells;
 	PlayerPet * m_PlayerPetInfo;
 	uint32 ActionBar[10];   // 10 slots

@@ -60,7 +60,6 @@ enum Classes
 	CLASS_MAGE = 8,
 	CLASS_WARLOCK = 9,
 	CLASS_DRUID = 11,
-	MAX_PLAYER_CLASSES
 };
 
 enum Races
@@ -325,9 +324,9 @@ enum CooldownTypes
 
 enum LootType
 {
-	LOOT_CORPSE                 = 1,
-	LOOT_SKINNING               = 2,
-	LOOT_FISHING                = 3,
+	LOOT_CORPSE					= 1,
+	LOOT_GATHERING				= 2,
+	LOOT_FISHING				= 3,
 	LOOT_PICKPOCKETING          = 2,                        // 4 unsupported by client, sending LOOT_SKINNING instead
 	LOOT_DISENCHANTING          = 2,                        // 5 unsupported by client, sending LOOT_SKINNING instead
 	LOOT_PROSPECTING            = 2,                        // 6 unsupported by client, sending LOOT_SKINNING instead
@@ -878,7 +877,7 @@ public:
 	void SetSpellTargetType(uint32 Type, Unit* target);
 	void SendMeetingStoneQueue(uint32 DungeonId, uint8 Status);
 
-	void AddToWorld(bool loggingin = false);
+	void AddToWorld();
 	void AddToWorld(MapMgr* pMapMgr);
 	void RemoveFromWorld();
 
@@ -1256,6 +1255,7 @@ public:
 	uint64 m_lootGuid;
 	uint64 m_currentLoot;
 	bool   m_insigniaTaken;
+	bool AllowDisenchantLoot();
 
 	/************************************************************************/
 	/* World Session                                                        */
@@ -1550,6 +1550,7 @@ public:
 	void RecalcAllRatings();
 	void RegenerateMana(bool is_interrupted);
 	void RegenerateHealth(bool inCombat);
+	void RegenerateEnergy();
 	void LoseRage(int32 value);
 	void LooseRunic(int32 value);
 	void LoosePower(uint32 powerField, int32 value);

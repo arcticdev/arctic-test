@@ -235,7 +235,7 @@ void WorldSession::LogoutPlayer(bool Save)
 
 		sEventMgr.RemoveEvents(_player);
 
-		//Duel Cancel on Leave
+		// Duel Cancel on Leave
 		if( _player->DuelingWith != NULL )
 			_player->EndDuel( DUEL_WINNER_RETREAT );
 
@@ -286,7 +286,7 @@ void WorldSession::LogoutPlayer(bool Save)
 		_player->RemoveFromBattlegroundQueue(2); // Pending BGs
 		BattlegroundManager.RemovePlayerFromQueues( _player );
 
-		//Issue a message telling all guild members that this player signed off
+		// Issue a message telling all guild members that this player signed off
 		if( _player->IsInGuild() )
 		{
 			Guild* pGuild = _player->m_playerInfo->guild;
@@ -307,8 +307,6 @@ void WorldSession::LogoutPlayer(bool Save)
 
 		if( _player->GetSummon() != NULL )
 			_player->GetSummon()->Remove( false, true, false );
-
-		//_player->SaveAuras();
 
 		if( Save )
 			_player->SaveToDB(false);
@@ -331,9 +329,6 @@ void WorldSession::LogoutPlayer(bool Save)
 		// Remove the "player locked" flag, to allow movement on next login
 		GetPlayer()->RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
 
-		// Save Honor Points
-		//_player->SaveHonorFields();
-
 		// Update any dirty account_data fields.
 		bool dirty = false;
 		if( sWorld.m_useAccountData )
@@ -350,7 +345,6 @@ void WorldSession::LogoutPlayer(bool Save)
 					if(sAccountData[ui].data)
 					{
 						CharacterDatabase.EscapeLongString(sAccountData[ui].data, sAccountData[ui].sz, ss);
-						//ss.write(sAccountData[ui].data,sAccountData[ui].sz);
 					}
 					ss << "\"";
 					dirty = true;

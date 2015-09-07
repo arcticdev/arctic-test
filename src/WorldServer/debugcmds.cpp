@@ -107,7 +107,7 @@ bool ChatHandler::HandleMoveInfoCommand(const char* args, WorldSession *m_sessio
 	uint32 attackerscount = (uint32)TO_CREATURE(obj)->GetAIInterface()->getAITargetsCount();
 	uint32 creatureState = TO_CREATURE(obj)->GetAIInterface()->m_creatureState;
 	uint32 curwp = TO_CREATURE(obj)->GetAIInterface()->getCurrentWaypoint();
-	//Unit unitToFollow = TO_CREATURE(obj)->GetAIInterface()->getUnitToFollow();
+
 	uint32 aistate = TO_CREATURE(obj)->GetAIInterface()->getAIState();
 	uint32 aitype = TO_CREATURE(obj)->GetAIInterface()->getAIType();
 	uint32 aiagent = TO_CREATURE(obj)->GetAIInterface()->getCurrentAgent();
@@ -142,16 +142,9 @@ bool ChatHandler::HandleDebugSetPhase(const char* args, WorldSession *m_session)
 	}
 
 	int32 phaseId = atoi(args);
-	if(phaseId < -1)
+	if(phaseId == 0 || phaseId < -1)
 	{
 		m_session->GetPlayer()->BroadcastMessage("You must specify a valid phase id.");
-		return true;
-	}
-	if(phaseId == 0)
-	{
-		pUnit->SetPhase(1);
-		m_session->GetPlayer()->BroadcastMessage("Resetting Phase.");
-		return true;
 	}
 
 	pUnit->SetPhase( phaseId );
@@ -174,8 +167,6 @@ bool ChatHandler::HandleAIMoveCommand(const char* args, WorldSession *m_session)
 		SystemMessage(m_session, "You should select a creature.");
 		return true;
 	}
-
-	//m_session->GetPlayer()->GetOrientation();
 
 	uint32 Move  = 1;
 	uint32 Run  = 0;

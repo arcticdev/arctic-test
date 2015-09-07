@@ -255,33 +255,6 @@ void GameObject::SaveToDB()
 
 void GameObject::SaveToFile(std::stringstream & name)
 {
-/*	std::stringstream ss;
-	if (!m_sqlid)
-		m_sqlid = objmgr.GenerateLowGuid(HIGHGUID_GAMEOBJECT);
-
-	 ss.rdbuf()->str("");
-	 ss << "INSERT INTO gameobjects VALUES ( "
-		<< m_sqlid << ", "
-		<< m_position.x << ", "
-		<< m_position.y << ", "
-		<< m_position.z << ", "
-		<< m_position.o << ", "
-		<< GetZoneId() << ", "
-		<< GetMapId() << ", '";
-
-	for( uint32 index = 0; index < m_valuesCount; index ++ )
-		ss << GetUInt32Value(index) << " ";
-
-	ss << "', ";
-	ss << GetEntry() << ", 0, 0)"; 
-
-	FILE * OutFile;
-
-	OutFile = fopen(name.str().c_str(), "wb");
-	if (!OutFile) return;
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-	fclose(OutFile);
-*/
 }
 
 void GameObject::InitAI()
@@ -297,16 +270,6 @@ void GameObject::InitAI()
 		pInfo->sound5 != 3 &&
 		pInfo->sound9 == 1)
 		return;
-
-/*	if(pInfo->DisplayID == 1027)//Shaman Shrine
-	{
-		if(pInfo->ID != 177964 || pInfo->ID != 153556)
-		{
-			Deactivate
-			SetUInt32Value(GAMEOBJECT_DYNAMIC, 0);
-		}
-	}*/
-
 
 	uint32 spellid = 0;
 	switch(pInfo->Type)
@@ -410,7 +373,6 @@ bool GameObject::Load(GOSpawn *spawn)
 	m_phaseMode = spawn->phase;
 	m_spawn = spawn;
 	SetUInt32Value(GAMEOBJECT_FLAGS,spawn->flags);
-//	SetUInt32Value(GAMEOBJECT_LEVEL,spawn->level);
 	SetByte(GAMEOBJECT_BYTES_1, GAMEOBJECT_BYTES_STATE, spawn->state);
 	if(spawn->faction)
 	{
@@ -450,8 +412,6 @@ void GameObject::UseFishingNode(Player* player)
 		EndFishing( player, true );
 		return;
 	}
-	
-	/* Unused code: sAreaStore.LookupEntry(GetMapMgr()->GetAreaID(GetPositionX(),GetPositionY()))->ZoneId*/
 
 	FishingZoneEntry *entry = NULL;
 
@@ -477,7 +437,6 @@ void GameObject::UseFishingNode(Player* player)
 	}
 
 	uint32 maxskill = entry->MaxSkill;
-//	uint32 minskill = entry->MaxSkill;
 	uint32 minskill = entry->MinSkill;
 
 	if( player->_GetSkillLineCurrent( SKILL_FISHING, false ) < maxskill )	

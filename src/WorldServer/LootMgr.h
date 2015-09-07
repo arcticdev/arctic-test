@@ -6,16 +6,25 @@
 
 #pragma once
 
+#define OBJECT_LOOT "objectloot"
+#define CREATURE_LOOT "creatureloot"
+#define CREATURE_LOOT_GATHERING "creatureloot_gathering"
+#define FISHING_LOOT "fishingloot"
+#define ITEM_LOOT "itemloot"
+#define PICKPOCKETING_LOOT "pickpocketingloot"
+
 struct ItemPrototype;
 class MapMgr;
 class Player;
+struct PlayerInfo;
+
 class LootRoll : public EventableObject
 {
 public:
 	LootRoll();
 	~LootRoll();
 	void Init(uint32 timer, uint32 groupcount, uint64 guid, uint32 slotid, uint32 itemid, uint32 randomsuffixid, uint32 randompropertyid, MapMgr* mgr);
-	void PlayerRolled(Player* player, uint8 choice);
+	void PlayerRolled(PlayerInfo* pInfo, uint8 choice);
 	void Finalize();
 
 	int32 event_GetInstanceID();
@@ -24,6 +33,7 @@ private:
 	Mutex mLootLock;
 	std::map<uint32, uint32> m_NeedRolls;
 	std::map<uint32, uint32> m_GreedRolls;
+	std::map<uint32, uint32> m_DisenchantRolls;
 	set<uint32> m_passRolls;
 	uint32 _groupcount;
 	uint32 _slotid;
@@ -62,8 +72,7 @@ typedef struct __LootItem
 typedef struct StoreLootItem
 {
 	_LootItem item;
-	float chance;
-	float chance2;
+	float chance[4];
 	uint32 mincount;
 	uint32 maxcount;
 	uint32 ffa_loot;
@@ -88,8 +97,7 @@ struct Loot
 struct tempy
 {
 	uint32 itemid;
-	float chance;
-	float chance_2;
+	float chance[4];
 	uint32 mincount;
 	uint32 maxcount;
 	uint32 ffa_loot;
@@ -107,8 +115,10 @@ enum PARTY_LOOT
 };
 enum PARTY_ROLL
 {
-	NEED	= 1,
-	GREED	= 2,
+	NEED		= 1,
+	GREED		= 2,
+	DISENCHANT	= 3,
+	PASS		= 4
 };
 
 class SERVER_DECL LootMgr : public Singleton < LootMgr >
@@ -118,15 +128,12 @@ public:
 	~LootMgr();
 
 	void AddLoot(Loot * loot, uint32 itemid, uint32 mincount, uint32 maxcount, uint32 ffa_loot);
-	void FillCreatureLoot(Loot * loot,uint32 loot_id, bool heroic);
-	void FillGOLoot(Loot * loot,uint32 loot_id, bool heroic);
+	void FillCreatureLoot(Loot * loot,uint32 loot_id, uint8 difficulty);
+	void FillGOLoot(Loot * loot,uint32 loot_id, uint8 difficulty);
 	void FillItemLoot(Loot *loot, uint32 loot_id);
 	void FillFishingLoot(Loot * loot,uint32 loot_id);
 	void FillGatheringLoot(Loot * loot,uint32 loot_id);
 	void FillPickpocketingLoot(Loot *loot, uint32 loot_id);
-	void FillDisenchantingLoot(Loot *loot, uint32 loot_id);
-	void FillProspectingLoot(Loot *loot, uint32 loot_id);
-	void FillMillingLoot(Loot *loot, uint32 loot_id);
 
 	bool CanGODrop(uint32 LootId,uint32 itemid);
 	bool IsPickpocketable(uint32 creatureId);
@@ -137,15 +144,12 @@ public:
 	void LoadDelayedLoot();
 	void LoadLootProp();
 
-	LootStore CreatureLoot;
-	LootStore FishingLoot;
-	LootStore GatheringLoot;
-	LootStore GOLoot;
-	LootStore ItemLoot;
-	LootStore ProspectingLoot;
-	LootStore DisenchantingLoot;
-	LootStore PickpocketingLoot;
-	LootStore MillingLoot;
+	LootStore	CreatureLoot;
+	LootStore	FishingLoot;
+	LootStore	GatheringLoot;
+	LootStore	GOLoot;
+	LootStore	ItemLoot;
+	LootStore	PickpocketingLoot;
 	std::map<uint32, std::set<uint32> > quest_loot_go;
 
 	RandomProps * GetRandomProperties(ItemPrototype * proto);
@@ -157,7 +161,7 @@ public:
 
 private:
 	void LoadLootTables(const char * szTableName,LootStore * LootTable);
-	void PushLoot(StoreLootList *list,Loot * loot, bool heroic, bool disenchant);
+	void PushLoot(StoreLootList *list,Loot * loot, uint8 difficulty, bool disenchant);
 
 	map<uint32, RandomPropertyVector> _randomprops;
 	map<uint32, RandomSuffixVector> _randomsuffix;
