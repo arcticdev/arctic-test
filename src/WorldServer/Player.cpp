@@ -186,7 +186,7 @@ void Player::Init()
 	GodModeCheat = false;
 	FlyCheat = false;
 
-	//FIX for professions
+	// FIX for professions
 	weapon_proficiency = 0x4000; // 2^14
 	// FIX for shit like shirt etc
 	armor_proficiency = 1;
@@ -5706,10 +5706,11 @@ bool Player::HasQuestForItem(uint32 itemid)
 		}
 	}
 	return false;
-}
-
-/*
-Loot type MUST be 1-corpse | go 2-skinning/herbalism/minning | 3-Fishing */
+} 
+/*| Loot type must be 1-corpse       |
+  | go 2-skinning/herbalism/minning  |
+  | 3-Fishing                        |
+*/
 void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 {
 	Group * m_Group = m_playerInfo->m_Group;
@@ -5718,13 +5719,9 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 	// handle items
 	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_ITEM)
-	{
 		lootObj = m_ItemInterface->GetItemByGUID(guid);
-	}
 	else
-	{
 		lootObj = m_mapMgr->_GetObject(guid);
-	}
 
 	if( lootObj == NULL )
 		return;
@@ -5763,9 +5760,8 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 	data << lootObj->m_loot.gold;
 	data << (uint8) 0; // loot size reserve
 
-
-	std::vector<__LootItem>::iterator iter = lootObj->m_loot.items.begin();
-	uint32 count = 0;
+	std::vector<__LootItem>::iterator iter=lootObj->m_loot.items.begin();
+	uint32 count=0;
 	uint8 slottype = 0;
 
 	for(uint32 x = 0; iter != lootObj->m_loot.items.end(); iter++, x++)
@@ -5780,48 +5776,50 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 		ItemPrototype* itemProto =iter->item.itemproto;
 		if (!itemProto)
 			continue;
-        // quest items check. type 4/5
-        // quest items that dont start quests.
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
-            continue;
+		// quest items check. type 4/5
+		// quest items that dont start quests.
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
+			continue;
 
-        // quest items that start quests need special check to avoid drops all the time.
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
-            continue;
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && !(itemProto->QuestId) && !HasQuestForItem(iter->item.itemproto->ItemId))
+			continue;
 
-        if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
-            continue;
-        if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
-            continue;
+		// quest items that start quests need special check to avoid drops all the time.
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
+			continue;
 
-        // check for starting item quests that need questlines.
-        if((itemProto->QuestId && itemProto->Bonding != ITEM_BIND_QUEST && itemProto->Bonding != ITEM_BIND_QUEST2))
-        {
-            bool HasRequiredQuests = true;
-            Quest * pQuest = QuestStorage.LookupEntry(itemProto->QuestId);
-            if(pQuest)
-            {
-                // check if its a questline.
-                for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
-                {
-                    if(pQuest->required_quests[i])
-                    {
-                        if(!HasFinishedQuest(pQuest->required_quests[i]) || GetQuestLogForEntry(pQuest->required_quests[i]))
-                        {
-                            HasRequiredQuests = false;
-                            break;
-                        }
-                    }
-                }
-                if(!HasRequiredQuests)
-                    continue;
-            }
-        }
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && GetQuestLogForEntry(itemProto->QuestId))
+			continue;
 
+		if((itemProto->Bonding == ITEM_BIND_QUEST) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
+			continue;
+
+		if((itemProto->Bonding == ITEM_BIND_QUEST2) && (itemProto->QuestId) && HasFinishedQuest(itemProto->QuestId))
+			continue;
+
+		// check for starting item quests that need questlines.
+		if((itemProto->QuestId && itemProto->Bonding != ITEM_BIND_QUEST && itemProto->Bonding != ITEM_BIND_QUEST2))
+		{
+			bool HasRequiredQuests = true;
+			Quest * pQuest = QuestStorage.LookupEntry(itemProto->QuestId);
+			if(pQuest)
+			{
+				// check if its a questline.
+				for(uint32 i = 0; i < pQuest->count_requiredquests; i++)
+				{
+					if(pQuest->required_quests[i])
+					{
+						if(!HasFinishedQuest(pQuest->required_quests[i]) || GetQuestLogForEntry(pQuest->required_quests[i]))
+						{
+							HasRequiredQuests = false;
+							break;
+						}
+					}
+				}
+				if(!HasRequiredQuests)
+					continue;
+			}
+		}
 
 		slottype = 0;
 		if(m_Group != NULL && loot_type < 2)
@@ -5840,6 +5838,7 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 				slottype = 0;
 				break;
 			}
+
 			// only quality items are distributed
 			if(itemProto->Quality < m_Group->GetThreshold())
 			{
@@ -5875,20 +5874,20 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 			data << uint32(0);
 		}
 
-		data << slottype;   // "still being rolled for" flag
+		data << slottype; // "still being rolled for" flag
 
 		if(slottype == 1)
 		{
 			if(iter->roll == NULL && !iter->passed)
 			{
-				int32 ipid = 0;
+				uint32 ipid = 0;
 				uint32 factor = 0;
 				if(iter->iRandomProperty)
-					ipid=iter->iRandomProperty->ID;
+					ipid = iter->iRandomProperty->ID;
 				else if(iter->iRandomSuffix)
 				{
-					ipid = -int32(iter->iRandomSuffix->id);
 					factor = Item::GenerateRandomSuffixFactor(iter->item.itemproto);
+					ipid = uint32(-int32(iter->iRandomSuffix->id));
 				}
 
 				if(iter->item.itemproto)
@@ -5898,36 +5897,33 @@ void Player::SendLoot(uint64 guid, uint32 mapid, uint8 loot_type)
 
 					data2.Initialize(SMSG_LOOT_START_ROLL);
 					data2 << guid;
+					data2 << mapid;
 					data2 << x;
 					data2 << uint32(iter->item.itemproto->ItemId);
 					data2 << uint32(factor);
-					if(iter->iRandomProperty)
-						data2 << uint32(iter->iRandomProperty->ID);
-					else if(iter->iRandomSuffix)
-						data2 << uint32(ipid);
-					else
-						data2 << uint32(0);
-
-					data2 << uint32(iter->iItemsCount);
+					data2 << uint32(ipid);
+					data2 << iter->iItemsCount;
 					data2 << uint32(60000); // countdown
-					data2 << uint8(0x0F); // mask
+					data2 << uint8(7);
 				}
 
 				Group * pGroup = m_playerInfo->m_Group;
 				if(pGroup)
 				{
 					pGroup->Lock();
-					for(uint32 i = 0; i < pGroup->GetSubGroupCount(); ++i)
+					for(uint32 i = 0; i < pGroup->GetSubGroupCount(); i++)
 					{
-						for(GroupMembersSet::iterator itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); ++itr)
+						for(GroupMembersSet::iterator itr = pGroup->GetSubGroup(i)->GetGroupMembersBegin(); itr != pGroup->GetSubGroup(i)->GetGroupMembersEnd(); itr++)
 						{
 							if((*itr)->m_loggedInPlayer && (*itr)->m_loggedInPlayer->GetItemInterface()->CanReceiveItem(itemProto, iter->iItemsCount, NULL) == 0)
 							{
 								if( (*itr)->m_loggedInPlayer->m_passOnLoot )
-									iter->roll->PlayerRolled( (*itr)->m_loggedInPlayer, 3 ); // passed
+									iter->roll->PlayerRolled( (*itr), PASS ); // passed
 								else
 									(*itr)->m_loggedInPlayer->GetSession()->SendPacket(&data2);
 							}
+							else
+								iter->roll->PlayerRolled( (*itr), PASS ); // passed
 						}
 					}
 					pGroup->Unlock();

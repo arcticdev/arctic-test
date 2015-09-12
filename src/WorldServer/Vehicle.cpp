@@ -171,16 +171,22 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 void Vehicle::SendSpells(uint32 entry, Player* plr)
 {
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
-
 	if(!acc)
+	{
+		WorldPacket data(SMSG_PET_SPELLS, 12);
+		data << uint64(0);
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
 		return;
+	}
 
-	WorldPacket data(SMSG_PET_SPELLS, 78); // uint32 = 4; (10 * 6) + 4 + 4 + 2 + 8 = 78
-	data << GetGUID();
+	uint8 count = 0;
+
+	WorldPacket data(SMSG_PET_SPELLS, 60);
+	data << uint64(GetGUID());
 	data << uint16(0);
 	data << uint32(0);
 	data << uint32(0x00000101);
-	uint8 count;
 
 	// Send the actionbar
 	for(uint8 i = 0; i < 6; ++i)

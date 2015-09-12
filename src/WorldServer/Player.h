@@ -1254,8 +1254,7 @@ public:
 	// loot variables
 	uint64 m_lootGuid;
 	uint64 m_currentLoot;
-	bool   m_insigniaTaken;
-	bool AllowDisenchantLoot();
+	bool m_insigniaTaken;
 
 	/************************************************************************/
 	/* World Session                                                        */
