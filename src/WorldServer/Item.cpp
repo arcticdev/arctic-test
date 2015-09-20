@@ -64,12 +64,9 @@ Item::~Item()
 	m_owner = NULL;
 }
 
-void Item::DeleteMe()
+void Item::Destructor()
 {
-	if( IsContainer() )
-		delete TO_CONTAINER(this);
-	else
-		delete this;
+	delete this;
 }
 
 void Item::Create( uint32 itemid, Player* owner )

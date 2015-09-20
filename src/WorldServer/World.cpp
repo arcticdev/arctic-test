@@ -1546,7 +1546,7 @@ bool CharacterLoaderThread::run()
 		if (hEvent)
 			WaitForSingleObject(hEvent,LOAD_THREAD_SLEEP*1000);
 #else
-		//and on unix, select will as well
+		// and on unix, select will as well
 		gettimeofday(&now, NULL);
 		tv.tv_sec = now.tv_sec + LOAD_THREAD_SLEEP;
 		tv.tv_nsec = now.tv_usec * 1000;

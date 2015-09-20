@@ -4,6 +4,8 @@
  * See COPYING for license details.
  */
 
+#include "SpellNameHashes.h"
+
 #pragma once
 
 class WorldSession;

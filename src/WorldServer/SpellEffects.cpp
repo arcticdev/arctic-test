@@ -3460,7 +3460,7 @@ void Spell::SpellEffectOpenLockItem(uint32 i)
 		lootmgr.FillGOLoot(&gameObjTarget->m_loot,gameObjTarget->GetEntry(), (gameObjTarget->GetMapMgr() ? gameObjTarget->GetMapMgr()->iInstanceMode : 0));
 		if(gameObjTarget->m_loot.items.size() > 0)
 		{
-			TO_PLAYER(caster)->SendLoot(gameObjTarget->GetGUID(), gameObjTarget->GetMapId(), LOOT_CORPSE);
+			TO_PLAYER(caster)->SendLoot(gameObjTarget->GetGUID(), LOOT_CORPSE);
 		}
 		gameObjTarget->SetUInt32Value(GAMEOBJECT_FLAGS, 1);
 	}
@@ -4692,7 +4692,7 @@ void Spell::SpellEffectPickpocket(uint32 i) // pickpocket
 	uint32 _rank = TO_CREATURE(unitTarget)->GetCreatureInfo() ? TO_CREATURE(unitTarget)->GetCreatureInfo()->Rank : 0;
 	unitTarget->m_loot.gold = float2int32((_rank+1) * unitTarget->getLevel() * (RandomUInt(5) + 1) * sWorld.getRate(RATE_MONEY));
 
-	p_caster->SendLoot(unitTarget->GetGUID(), unitTarget->GetMapId(), LOOT_PICKPOCKETING);
+	p_caster->SendLoot(unitTarget->GetGUID(), LOOT_PICKPOCKETING);
 	target->SetPickPocketed(true);
 }
 
@@ -5957,7 +5957,7 @@ void Spell::SpellEffectSkinning(uint32 i)
 	{
 		//Fill loot for Skinning
 		lootmgr.FillGatheringLoot(&cr->m_loot, cr->GetEntry());
-		TO_PLAYER( m_caster )->SendLoot( cr->GetGUID(), cr->GetMapId(), 2 );
+		TO_PLAYER( m_caster )->SendLoot( cr->GetGUID(), 2 );
 
 		//Not skinable again
 		cr->BuildFieldUpdatePacket( p_caster, UNIT_FIELD_FLAGS, 0 );
@@ -6222,7 +6222,7 @@ void Spell::SpellEffectDisenchant(uint32 i)
 					caster->_AdvanceSkillLine(SKILL_ENCHANTING, float2int32( 1.0f * sWorld.getRate(RATE_SKILLRATE)));
 			}
 			OUT_DEBUG("SpellEffect","Succesfully disenchanted item %d", uint32(itemTarget->GetEntry()));
-			p_caster->SendLoot( itemTarget->GetGUID(), itemTarget->GetMapId(), LOOT_GATHERING );
+			p_caster->SendLoot( itemTarget->GetGUID(), LOOT_GATHERING );
 		}
 		else
 		{
@@ -6627,8 +6627,8 @@ void Spell::SpellEffectSkinPlayerCorpse(uint32 i)
 		pCorpse->SetUInt32Value(CORPSE_FIELD_DYNAMIC_FLAGS, CORPSE_DYN_FLAG_LOOTABLE);
 
 		// send the corpse's loot
-		if( pCorpse != NULL )		// should never be null but /shrug
-			p_caster->SendLoot(pCorpse->GetGUID(), pCorpse->GetMapId(), 2);
+		if( pCorpse != NULL ) // should never be null but /shrug
+			p_caster->SendLoot(pCorpse->GetGUID(), 2);
 
 	}else if(corpse!= NULL)
 	{
@@ -6664,7 +6664,7 @@ void Spell::SpellEffectSkinPlayerCorpse(uint32 i)
 		objmgr.CorpseAddEventDespawn(corpse);
 
 		// send loot
-		p_caster->SendLoot(corpse->GetGUID(), corpse->GetMapId(), 2);
+		p_caster->SendLoot(corpse->GetGUID(), 2);
 	}
 }
 
@@ -6869,7 +6869,7 @@ void Spell::SpellEffectProspecting(uint32 i)
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
 		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
-		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
+		p_caster->SendLoot(p_caster->GetGUID(), 2);
 	}
 	else // this should never happen either
 	{
@@ -7165,7 +7165,7 @@ void Spell::SpellEffectMilling(uint32 i)
 	{
 		p_caster->SetLootGUID(p_caster->GetGUID());
 		lootmgr.FillItemLoot(&p_caster->m_loot, entry);
-		p_caster->SendLoot(p_caster->GetGUID(), p_caster->GetMapId(), 2);
+		p_caster->SendLoot(p_caster->GetGUID(), 2);
 	}
 	else
 	{

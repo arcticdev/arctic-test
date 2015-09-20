@@ -446,7 +446,7 @@ void GameObject::UseFishingNode(Player* player)
 	if( Rand(((player->_GetSkillLineCurrent( SKILL_FISHING, true ) - minskill) * 100) / maxskill) )
 	{
 		lootmgr.FillFishingLoot( &m_loot, zone );
-		player->SendLoot( GetGUID(), player->GetMapId(), LOOT_FISHING );
+		player->SendLoot( GetGUID(), LOOT_FISHING );
 		EndFishing( player, false );
 	}
 	else // Failed
@@ -454,7 +454,6 @@ void GameObject::UseFishingNode(Player* player)
 		player->GetSession()->OutPacket( SMSG_FISH_ESCAPED );
 		EndFishing( player, true );
 	}
-
 }
 
 void GameObject::EndFishing(Player* player, bool abort )
