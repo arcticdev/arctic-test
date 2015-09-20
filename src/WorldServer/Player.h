@@ -1249,12 +1249,12 @@ public:
 
 	ARCTIC_INLINE const uint64& GetLootGUID() const { return m_lootGuid; }
 	ARCTIC_INLINE void SetLootGUID(const uint64 &guid) { m_lootGuid = guid; }
-	void SendLoot(uint64 guid, uint32 mapid, uint8 loot_type);
+	void SendLoot(uint64 guid, uint8 loot_type);
 
 	// loot variables
 	uint64 m_lootGuid;
 	uint64 m_currentLoot;
-	bool m_insigniaTaken;
+	bool   m_insigniaTaken;
 
 	/************************************************************************/
 	/* World Session                                                        */

@@ -694,7 +694,7 @@ void LootRoll::Finalize()
 
 	WorldPacket data(34);
 
-	for(std::map<uint32, uint32>::iterator itr = m_NeedRolls.begin(); itr != m_NeedRolls.end(); ++itr)
+	for(std::map<uint32, uint32>::iterator itr = m_NeedRolls.begin(); itr != m_NeedRolls.end(); itr++)
 	{
 		if(itr->second > highest)
 		{
@@ -706,13 +706,23 @@ void LootRoll::Finalize()
 
 	if(!highest)
 	{
-		for(std::map<uint32, uint32>::iterator itr = m_GreedRolls.begin(); itr != m_GreedRolls.end(); ++itr)
+		for(std::map<uint32, uint32>::iterator itr = m_GreedRolls.begin(); itr != m_GreedRolls.end(); itr++)
 		{
 			if(itr->second > highest)
 			{
 				highest = itr->second;
 				player = itr->first;
 				hightype = GREED;
+			}
+		}
+
+		for(std::map<uint32, uint32>::iterator itr = m_DisenchantRolls.begin(); itr != m_DisenchantRolls.end(); itr++)
+		{
+			if(itr->second > highest)
+			{
+				highest = itr->second;
+				player = itr->first;
+				hightype = DISENCHANT;
 			}
 		}
 	}
@@ -760,7 +770,10 @@ void LootRoll::Finalize()
 		data << _guid << _groupcount << _itemid << _randomsuffixid << _randompropertyid;
 		set<uint32>::iterator pitr = m_passRolls.begin();
 		while(_player == NULL && pitr != m_passRolls.end())
-			_player = _mgr->GetPlayer( (*(pitr++)) );
+		{
+			_player = _mgr->GetPlayer( (*(pitr)) );
+			++pitr;
+		}
 
 		if( _player != NULL )
 		{
@@ -785,6 +798,46 @@ void LootRoll::Finalize()
 	else
 		_player->GetSession()->SendPacket(&data);
 
+	if(hightype == DISENCHANT /*&& _player->AllowDisenchantLoot()*/)	// We need one enchanter in our Group
+	{
+		// generate Disenchantingloot
+		Item * pItem = objmgr.CreateItem( itemid, _player);
+		lootmgr.FillItemLoot(&pItem->m_loot, pItem->GetEntry());
+
+		// add loot
+		for(std::vector<__LootItem>::iterator iter=pItem->m_loot.items.begin();iter != pItem->m_loot.items.end();iter++)
+		{
+			itemid =iter->item.itemproto->ItemId;
+			Item * Titem = objmgr.CreateItem( itemid, _player);
+			if( Titem == NULL )
+				continue;
+			if( !_player->GetItemInterface()->AddItemToFreeSlot(Titem) )
+			{
+				_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
+				sMailSystem.DeliverMessage(MAILTYPE_NORMAL, _player->GetGUID(), _player->GetGUID(), "Loot Roll", "Here is your reward.", 0, 0, itemid, 1, true);
+			}
+			Titem->Destructor();
+			Titem = NULL;
+		}
+		pItem->Destructor();
+		pItem = NULL;
+
+		pLoot->items.at(_slotid).iItemsCount=0;
+
+		// Send "finish" packet
+		data.Initialize(SMSG_LOOT_REMOVED);
+		data << uint8(_slotid);
+		Player* plr;
+		for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
+		{
+			if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
+				plr->GetSession()->SendPacket(&data);
+		}
+
+		delete this; //end here and skip the rest
+		return;
+	}
+
 	ItemPrototype* it = ItemPrototypeStorage.LookupEntry(itemid);
 
 	int8 error;
@@ -801,7 +854,17 @@ void LootRoll::Finalize()
 		SlotResult slotresult = _player->GetItemInterface()->FindFreeInventorySlot(it);
 		if(!slotresult.Result)
 		{
-			_player->GetItemInterface()->BuildInventoryChangeError(NULL, NULL, INV_ERR_INVENTORY_FULL);
+			_player->GetSession()->SendNotification("No free slots were found in your inventory, item has been mailed.");
+			sMailSystem.DeliverMessage(MAILTYPE_NORMAL, _player->GetGUID(), _player->GetGUID(), "Loot Roll", "Here is your reward.", 0, 0, it->ItemId, 1, true);
+			data.Initialize(SMSG_LOOT_REMOVED);
+			data << uint8(_slotid);
+			Player* plr;
+			for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
+			{
+				if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
+					plr->GetSession()->SendPacket(&data);
+			}
+			delete this;
 			return;
 		}
 
@@ -829,6 +892,7 @@ void LootRoll::Finalize()
 		else
 		{
 			item->Destructor();
+			item = NULL;
 		}
 	}
 	else
@@ -844,7 +908,7 @@ void LootRoll::Finalize()
 	data.Initialize(SMSG_LOOT_REMOVED);
 	data << uint8(_slotid);
 	Player* plr;
-	for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); ++itr)
+	for(LooterSet::iterator itr = pLoot->looters.begin(); itr != pLoot->looters.end(); itr++)
 	{
 		if((plr = _player->GetMapMgr()->GetPlayer(*itr)))
 			plr->GetSession()->SendPacket(&data);
