@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Common.h"
+#include "../Common.h"
 #include "DataStore.h"
 #include "../libs/Utilities/Timer.h"
 
@@ -1278,7 +1278,7 @@ struct VehicleEntry
 	uint32 m_uiLocomotionType; // 34
 	float m_msslTrgtImpactTexRadius; // 35
 	uint32 m_uiSeatIndicatorType; // 36
-	// 37, new in 3.1
+	uint32 m_powerType; // 37
 	// 38, new in 3.1
 	// 39, new in 3.1
 };
@@ -1402,24 +1402,29 @@ ARCTIC_INLINE float GetDBCCastTime(SpellRadius *radius)
 {
     return radius->Radius;
 }
+
 ARCTIC_INLINE uint32 GetCastTime(SpellCastTime *time)
 {
     return time->CastTime;
 }
+
 ARCTIC_INLINE float GetMaxRange(SpellRange *range)
 {
     return range->maxRange;
 }
+
 ARCTIC_INLINE float GetMinRange(SpellRange *range)
 {
     return range->minRange;
 }
+
 ARCTIC_INLINE uint32 GetDuration(SpellDuration *dur)
 {
     return dur->Duration1;
 }
 
-#define SAFE_DBC_CODE_RETURNS			/* undefine this to make out of range/nulls return null. */
+/* undefine this to make out of range/nulls return null. */
+#define SAFE_DBC_CODE_RETURNS
 
 template<class T>
 class SERVER_DECL DBCStorage
@@ -1456,19 +1461,19 @@ public:
 		if(m_heapBlock)
 		{
 			delete[] m_heapBlock;
-			//free(m_heapBlock);
+			// free(m_heapBlock);
 			m_heapBlock = NULL;
 		}
 		if(m_entries)
 		{
 			delete[] m_entries;
-			//free(m_entries);
+			// free(m_entries);
 			m_entries = NULL;
 		}
 		if( m_stringData != NULL )
 		{
 			delete[] m_stringData;
-			//free(m_stringData);
+			// free(m_stringData);
 			m_stringData = NULL;
 		}
 	}
@@ -1503,7 +1508,7 @@ public:
 		{
 			fseek( f, 20 + ( rows * cols * 4 ), SEEK_SET );
 			m_stringData = new char[string_length];
-			//m_stringData = (char*)malloc(string_length);
+			// m_stringData = (char*)malloc(string_length);
 			m_stringlength = string_length;
 			fread( m_stringData, string_length, 1, f );
 		}
@@ -1511,7 +1516,7 @@ public:
 		fseek(f, pos, SEEK_SET);
 
 		m_heapBlock = new T[rows];
-		//m_heapBlock = (T*)malloc(rows * sizeof(T));
+		// m_heapBlock = (T*)malloc(rows * sizeof(T));
 		ASSERT(m_heapBlock);
 
 		/* read the data for each row */
@@ -1531,7 +1536,7 @@ public:
 		if(load_indexed)
 		{
 			m_entries = new T*[(m_max+1)];
-			//m_entries = (T**)malloc(sizeof(T*) * (m_max+1));
+			// m_entries = (T**)malloc(sizeof(T*) * (m_max+1));
 			ASSERT(m_entries);
 
 			memset(m_entries, 0, (sizeof(T*) * (m_max+1)));
@@ -1573,7 +1578,7 @@ public:
 			if(*t == 'x')
 			{
 				++t;
-				continue;		// skip!
+				continue; // skip!
 			}
 #ifdef USING_BIG_ENDIAN
 			swap32(&val);
@@ -1770,6 +1775,7 @@ extern SERVER_DECL DBCStorage<AreaPOIEntry> dbcAreaPOI;
 extern SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypes;
 extern SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelData;
+extern SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 
 bool LoadDBCs();
 bool LoadRSDBCs();
