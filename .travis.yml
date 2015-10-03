@@ -21,4 +21,5 @@ script:
   - test -d _build || mkdir _build
   - test -d _install || mkdir _install
   - cd _build
+  - sh ./make_precompiled_header_debug.sh
   - sh ./configure.ac
