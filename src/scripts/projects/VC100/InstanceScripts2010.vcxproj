@@ -199,6 +199,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <AdditionalDependencies>WorldServer.lib;%(AdditionalDependencies)</AdditionalDependencies>
