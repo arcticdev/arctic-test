@@ -2,4 +2,18 @@
 # Copyright (c) 2008-2015 Arctic Server Team
 # See COPYING for license details.
 
-install: ./configure.ac
+language: cpp
+
+git:
+  depth: 1
+
+branches:
+  only:
+    - master
+
+compiler:
+  - gcc
+  - clang
+
+script:
+  - test ./configure && make && make test
