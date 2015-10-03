@@ -21,5 +21,4 @@ script:
   - test -d _build || mkdir _build
   - test -d _install || mkdir _install
   - cd _build
-  - sh ./configure
-  - /bin/bash ./configure CONFIG_SHELL=/bin/bash
+  - sh ./configure.ac
