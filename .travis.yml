@@ -2,24 +2,4 @@
 # Copyright (c) 2008-2015 Arctic Server Team
 # See COPYING for license details.
 
-language: cpp
-
-# reduce clone time by only getting the latest commit and not the whole history (default for travis is 100)
-git:
-  depth: 1
-
-# only run travis on the master branch
-branches:
-  only:
-    - master
-
-compiler:
-  - gcc
-  - clang
-
-script:
-  - test -d _build || mkdir _build
-  - test -d _install || mkdir _install
-  - cd _build
-  - sh ./make_precompiled_header_debug.sh
-  - sh ./configure.ac
+install: make get-deps 
