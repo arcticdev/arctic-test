@@ -16,3 +16,6 @@ branches:
 compiler:
   - gcc
   - clang
+
+script:
+  - test ./configure && make && make test
