@@ -5,7 +5,7 @@
  */
 
 #include "StdAfx.h"
-#include "svn_revision.h"
+#include "../libs/svn_revision.h"
 
 #ifdef CLUSTERING
 

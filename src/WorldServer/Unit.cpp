@@ -12,7 +12,7 @@ Unit::Unit()
 	m_attackTimer = 0;
 	m_attackTimer_1 = 0;
 	m_duelWield = false;
-	
+
 	memset(&movement_info, 0, sizeof(MovementInfo));
 	memset(movement_packet, 0, sizeof(movement_packet));
 	movement_info.FallTime = 0;
@@ -231,6 +231,7 @@ Unit::Unit()
 	{
 		m_CustomTimers[x] = 0;
 	}
+
 }
 
 Unit::~Unit()
@@ -251,9 +252,7 @@ Unit::~Unit()
 	m_redirectSpellPackets = NULL;
 
 	if(m_currentSpell)
-	{
 		m_currentSpell->cancel();
-	}
 
 	if( m_CurrentVehicle != NULL )
 	{
@@ -339,10 +338,11 @@ void Unit::Update( uint32 p_time )
 
 		//-----------------------POWER & HP REGENERATION-----------------
 		/* Please dont do temp fixes. Better report to me. Thx. Shady */
-        if( p_time >= m_H_regenTimer )
-		    RegenerateHealth();
-	    else
-		    m_H_regenTimer -= p_time;
+
+		if( p_time >= m_H_regenTimer )
+			RegenerateHealth();
+		else
+			m_H_regenTimer -= p_time;
 
 		if( p_time >= m_P_regenTimer )
 		{
@@ -547,10 +547,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 		if( itr2->deleted )
 		{
 			if( can_delete )
-			{
 				m_procSpells.erase( itr2 );
-			}
-
 			continue;
 		}
 
@@ -610,7 +607,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 			uint32 proc_Chance = itr2->procChance;
 			SpellEntry* spe  = dbcSpell.LookupEntry( spellId );
 
-			//Custom procchance modifications based on equipped weapon speed.
+			// Custom procchance modifications based on equipped weapon speed.
 			if( IsPlayer() && ospinfo != NULL && ospinfo->ProcsPerMinute > 0.0f )
 			{
 				float ppm = ospinfo->ProcsPerMinute;
@@ -641,7 +638,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 				}
 			}
 
-			//hack shit for different proc rates
+			// hack shit for different proc rates
 			if( spellId == 40472 )
 			{
 				if( !CastingSpell )
@@ -718,14 +715,14 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 					uint32 talentlevel = 0;
 					switch( origId )
 					{
-						//mace specialization
+						// mace specialization
 						case 12284:	{talentlevel = 1;}break;
 						case 12701:	{talentlevel = 2;}break;
 						case 12702:	{talentlevel = 3;}break;
 						case 12703:	{talentlevel = 4;}break;
 						case 12704:	{talentlevel = 5;}break;
 
-						//Unbridled Wrath
+						// Unbridled Wrath
 						case 12999:	{talentlevel = 1;}break;
 						case 13000:	{talentlevel = 2;}break;
 						case 13001:	{talentlevel = 3;}break;
@@ -1249,7 +1246,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 								Spell* spell = new Spell(TO_UNIT(this), spellInfo ,true, NULL);
 								spell->forced_basepoints[0] = ospinfo->EffectBasePoints[0] + 1;
 								spell->ProcedOnSpell = CastingSpell;
-								spell->pSpellId=origId;
+								spell->pSpellId = origId;
 								spell->prepare(&targets);
 								continue;
 							}break;
@@ -2231,7 +2228,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 
 								dmg_overwrite = float2int32(GetSpellBaseCost(CastingSpell) * 0.6f);
 							}break;
-						//Fiery Payback
+						// Fiery Payback
 						case 44440:
 						case 44441:
 							{
@@ -2307,11 +2304,11 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 									}
 								}
 							}break;
-						case 63685:// Frozen Power - Freeze
+						case 63685: // Frozen Power - Freeze
 							{
 								uint32 minDistance = spe->EffectBasePoints[0] + 1;
 								if(!victim || GetDistanceSq(victim) < minDistance * minDistance)
-									continue;	// victim not far enough
+									continue; // victim not far enough
 							}break;
 						case 63375: // Improved Stormstrike
 							{
@@ -2321,7 +2318,7 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 				}
 				if(spellId==17364 || spellId==32175 || spellId==32176) // Stormstrike fix
 					continue;
-				if(spellId==22858 && isInBack(victim)) //retatliation needs target to be not in front. Can be casted by creatures too
+				if(spellId==22858 && isInBack(victim)) // retatliation needs target to be not in front. Can be casted by creatures too
 					continue;
 
 				if( CastingSpell && spellId == 54370 )
@@ -2354,9 +2351,9 @@ uint32 Unit::HandleProc( uint32 flag, Unit* victim, SpellEntry* CastingSpell, ui
 				spell = (new Spell(TO_UNIT( this ), spellInfo ,true, NULL));
 				spell->forced_basepoints[0] = dmg_overwrite;
 				spell->ProcedOnSpell = CastingSpell;
-				spell->pSpellId=origId;
+				spell->pSpellId = origId;
 				spell->prepare(&targets);
-			}//not always we have a spell to cast
+			} // not always we have a spell to cast
 		}
 	}
 
@@ -4568,8 +4565,8 @@ bool Unit::SetAuraDuration(uint32 spellId,Unit* caster,uint32 duration)
 
 bool Unit::SetAuraDuration(uint32 spellId,uint32 duration)
 {
-	Aura* aur= NULL;
-	aur = FindAura(spellId,0);
+	Aura* aur = NULL;
+	aur = FindAura(spellId, 0);
 	if(aur == NULL)
 		return false;
 
@@ -4852,8 +4849,8 @@ int32 Unit::GetSpellBonusDamage(Unit* pVictim, SpellEntry *spellInfo,int32 base_
 
 	if( !healing )
 	{
-		summaryPCTmod += caster->GetDamageDonePctMod(school)-1; //value is initialized with 1
-		summaryPCTmod += pVictim->DamageTakenPctMod[school]-1;//value is initialized with 1
+		summaryPCTmod += caster->GetDamageDonePctMod(school)-1; // value is initialized with 1
+		summaryPCTmod += pVictim->DamageTakenPctMod[school]-1; // value is initialized with 1
 		summaryPCTmod += pVictim->ModDamageTakenByMechPCT[Spell::GetMechanic(spellInfo)];
 	}
 	else
@@ -4939,7 +4936,7 @@ void Unit::SendChatMessageToPlayer(uint8 type, uint32 lang, const char *msg, Pla
 	data << type;
 	data << lang;
 	data << GetGUID();
-	data << uint32(0);			// new in 2.1.0
+	data << uint32(0); // new in 2.1.0
 	data << uint32(UnitNameLength);
 	data << ci->Name;
 	data << uint64(0);
@@ -4965,7 +4962,7 @@ void Unit::SendChatMessageAlternateEntry(uint32 entry, uint8 type, uint32 lang, 
 	data << type;
 	data << lang;
 	data << GetGUID();
-	data << uint32(0);			// new in 2.1.0
+	data << uint32(0); // new in 2.1.0
 	data << uint32(UnitNameLength);
 	data << ci->Name;
 	data << uint64(0);
@@ -5009,7 +5006,7 @@ void Unit::AddInRangeObject(Object* pObj)
 	}
 
 	Object::AddInRangeObject(pObj);
-}//427
+}
 
 void Unit::OnRemoveInRangeObject(Object* pObj)
 {
@@ -5017,8 +5014,6 @@ void Unit::OnRemoveInRangeObject(Object* pObj)
 
 	if(pObj->GetTypeId() == TYPEID_UNIT || pObj->GetTypeId() == TYPEID_PLAYER)
 	{
-		/*if(m_useAI)*/
-
 		Unit* pUnit = TO_UNIT(pObj);
 		GetAIInterface()->CheckTarget(pUnit);
 
@@ -5029,9 +5024,7 @@ void Unit::OnRemoveInRangeObject(Object* pObj)
         Object::OnRemoveInRangeObject(pObj);
 	}
     else
-    {
         Object::OnRemoveInRangeObject(pObj);
-    }
 }
 
 void Unit::ClearInRangeSet()
@@ -5049,8 +5042,8 @@ void Unit::EventAddEmote(EmoteType emote, uint32 time)
 
 void Unit::EventAllowCombat(bool allow)
 {
-		m_aiInterface->SetAllowedToEnterCombat(allow);
-		m_aiInterface->setCanMove(allow);
+	m_aiInterface->SetAllowedToEnterCombat(allow);
+	m_aiInterface->setCanMove(allow);
 }
 
 void Unit::EmoteExpire()
@@ -5098,10 +5091,10 @@ int32 Unit::GetDamageDoneMod(uint32 school)
 
 float Unit::GetDamageDonePctMod(uint32 school)
 {
-   if(IsPlayer())
-	   return m_floatValues[PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+school];
+	if(IsPlayer())
+		return m_floatValues[PLAYER_FIELD_MOD_DAMAGE_DONE_PCT+school];
 	else
-	   return TO_CREATURE(this)->ModDamageDonePct[school];
+		return TO_CREATURE(this)->ModDamageDonePct[school];
 }
 
 void Unit::CalcDamage()
@@ -5125,7 +5118,6 @@ void Unit::CalcDamage()
 		SetFloatValue(UNIT_FIELD_MINDAMAGE,r > 0 ? ( IsPet() ? r * 0.9f : r ) : 0 );
 		r = BaseDamage[1]*mult+delta+bonus;
 		SetFloatValue(UNIT_FIELD_MAXDAMAGE, r > 0 ? ( IsPet() ? r * 1.1f : r ) : 0 );
-
 	}
 }
 
@@ -5367,7 +5359,7 @@ bool Unit::HasNegAuraWithMechanic(uint32 mechanic)
 
 void Unit::EventDeathAuraRemoval()
 {
-	for(uint32 x=0;x<MAX_AURAS+MAX_PASSIVE_AURAS;x++)
+	for(uint32 x = 0; x < MAX_AURAS+MAX_PASSIVE_AURAS; x++)
 	{
 		if(m_auras[x] != NULL && !m_auras[x]->IsPassive())
 		{
@@ -5427,7 +5419,7 @@ void Unit::UpdateSpeed()
 				TO_PLAYER(pUnit)->SetPlayerSpeed(RUN, m_runSpeed);
 				TO_PLAYER(pUnit)->SetPlayerSpeed(FLY, m_flySpeed);
 			}
-	}
+		}
 	}
 
 	if(IsPlayer())
@@ -5515,6 +5507,7 @@ void Unit::CastSpell(uint64 targetGuid, uint32 SpellID, bool triggered)
 
 	CastSpell(targetGuid, ent, triggered);
 }
+
 uint8 Unit::CastSpellAoF(float x,float y,float z,SpellEntry* Sp, bool triggered)
 {
 	if( Sp == NULL )
@@ -6488,7 +6481,7 @@ void CombatStatusHandler::RemoveAttackTarget(Unit* pTarget)
 		else
 		{
 			uint32 new_t = (uint32)UNIXTIME + COMBAT_TIMEOUT_IN_SECONDS;
-			//printf("Setting attack target "I64FMT" on "I64FMT" to time out after 5 seconds.\n", pTarget->GetGUID(), m_Unit->GetGUID());
+
 			if( itr->second < new_t )
 				itr->second = new_t;
 		}
@@ -6707,8 +6700,8 @@ void Unit::Energize(Unit* target, uint32 SpellId, uint32 amount, uint32 type)
 
 void Unit::InheritSMMods(Unit* inherit_from)
 {
-	for(uint32 x=0;x<SPELL_MODIFIERS;x++)
-		for(uint32 y=0;y<2;y++)
+	for(uint32 x = 0; x < SPELL_MODIFIERS; x++)
+		for(uint32 y = 0; y < 2;y++)
 			if(inherit_from->SM[x][y])
 			{
 				if(SM[x][y] == 0)
@@ -6745,19 +6738,18 @@ void Unit::DispelAll(bool positive)
 }
 
 /* bool Unit::RemoveAllAurasByMechanic (renamed from MechanicImmunityMassDispel)
-- Removes all auras on this unit that are of a specific mechanic.
-- Useful for things like.. Apply Aura: Immune Mechanic, where existing (de)buffs are *always supposed* to be removed.
-- I'm not sure if this goes here under unit.
-* Arguments:
-	- uint32 MechanicType
-		*
+ * - Removes all auras on this unit that are of a specific mechanic.
+ * - Useful for things like.. Apply Aura: Immune Mechanic, where existing (de)buffs are *always supposed* to be removed.
+ * - I'm not sure if this goes here under unit.
+ * Arguments:
+ * - uint32 MechanicType
+ *
+ * Returns;
+ * - False if no buffs were dispelled, true if more than 0 were dispelled.
+ */
 
-* Returns;
-	- False if no buffs were dispelled, true if more than 0 were dispelled.
-*/
 bool Unit::RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel = -1 , bool HostileOnly = true )
 {
-	//sLog.outString( "Unit::MechanicImmunityMassDispel called, mechanic: %u" , MechanicType );
 	uint32 DispelCount = 0;
 	for(uint32 x = ( HostileOnly ? MAX_POSITIVE_AURAS : 0 ) ; x < MAX_AURAS ; x++ ) // If HostileOnly = 1, then we use aura slots 40-56 (hostile). Otherwise, we use 0-56 (all)
 		{
@@ -6768,7 +6760,7 @@ bool Unit::RemoveAllAurasByMechanic( uint32 MechanicType , uint32 MaxDispel = -1
 			{
 				if( Spell::HasMechanic(m_auras[x]->GetSpellProto(), MechanicType) ) // Remove all mechanics of type MechanicType (my english goen boom)
 					{
-						//sLog.outString( "Removed aura. [AuraSlot %u, SpellId %u]" , x , m_auras[x]->GetSpellId() );
+						// sLog.outString( "Removed aura. [AuraSlot %u, SpellId %u]" , x , m_auras[x]->GetSpellId() );
 						// TODO: Stop moving if fear was removed.
 						RemoveAuraBySlot(x);
 						DispelCount ++;
@@ -6796,7 +6788,7 @@ void Unit::setAttackTimer(int32 time, bool offhand)
 		time = offhand ? m_uint32Values[UNIT_FIELD_BASEATTACKTIME + 1] : m_uint32Values[UNIT_FIELD_BASEATTACKTIME];
 
 	time = std::max(1000,float2int32(float(time)*GetFloatValue(UNIT_MOD_CAST_SPEED)));
-	if(time>300000)		// just in case.. shouldn't happen though
+	if(time>300000) // just in case.. shouldn't happen though
 		time=offhand ? m_uint32Values[UNIT_FIELD_BASEATTACKTIME + 1] : m_uint32Values[UNIT_FIELD_BASEATTACKTIME];
 
 	if(offhand)
@@ -6815,7 +6807,7 @@ bool Unit::isAttackReady(bool offhand)
 
 void Unit::ReplaceAIInterface(AIInterface *new_interface)
 {
-	delete m_aiInterface;	//be carefull when you do this. Might screw unit states !
+	delete m_aiInterface; // be carefull when you do this. Might screw unit states !
 	m_aiInterface = new_interface;
 }
 
@@ -6913,7 +6905,6 @@ void Object::ClearLoot()
 	m_loot.looters.clear();
 }
 
-
 void Creature::Tag(Player* plr)
 {
 	// Tagging
@@ -6960,7 +6951,7 @@ void Unit::RemoveInvisibility()
 	}
 }
 
-//what is an Immobilize spell ? Have to add it later to spell effect handler
+// what is an Immobilize spell ? Have to add it later to spell effect handler
 void Unit::EventStunOrImmobilize()
 {
 	if( trigger_on_stun )
@@ -6976,7 +6967,7 @@ void Unit::EventStunOrImmobilize()
 void Unit::EventChill(Unit* proc_target)
 {
 	if( !proc_target || TO_UNIT(this) == proc_target )
-		return; //how and why would we chill ourselfs
+		return; // how and why would we chill ourselfs
 
 	if( trigger_on_chill )
 	{
@@ -7049,7 +7040,6 @@ uint32 Unit::DoDamageSplitTarget(uint32 res, uint32 school_type, bool melee_dmg)
 			}
 		}
 	}
-
 	return res;
 }
 
@@ -7125,7 +7115,6 @@ void Unit::RemoveOnAuraRemoveSpell(uint32 NameHash)
 	if(itr != m_onAuraRemoveSpells.end())
 		itr->second->deleted = true;
 }
-
 
 // Aura by NameHash has been removed
 void Unit::OnAuraRemove(uint32 NameHash, Unit* m_target)
@@ -7247,6 +7236,14 @@ void Unit::Dismount()
 	RemoveFlag( UNIT_FIELD_FLAGS, UNIT_FLAG_LOCK_PLAYER );
 }
 
+void Unit::SendHeartBeatMsg( bool toself )
+{
+	WorldPacket data(MSG_MOVE_HEARTBEAT, 64);
+	data << GetNewGUID();
+	movement_info.write(data);
+	SendMessageToSet(&data, toself);
+}
+
 void Unit::RemoveAuraBySlot(uint16 Slot)
 {
 	if(m_auras[Slot] != NULL)
@@ -7254,4 +7251,78 @@ void Unit::RemoveAuraBySlot(uint16 Slot)
 		m_auras[Slot]->Remove();
 		m_auras[Slot] = NULL;
 	}
+}
+
+bool Unit::CanEnterVehicle(Player * requester)
+{
+	if(requester == NULL || !requester->IsInWorld())
+		return false;
+
+	if(GetInstanceID() != requester->GetInstanceID())
+		return false;
+
+	if(!isAlive() || !requester->isAlive())
+		return false;
+
+	if(requester->GetDistance2dSq(this) > 10.0f)
+		return false;
+
+	if(isHostile(this, requester))
+		return false;
+
+	if(requester->m_CurrentCharm)
+		return false;
+
+	if(requester->m_isGmInvisible)
+	{
+		sChatHandler.GreenSystemMessage(requester->GetSession(), "Please turn off invis before entering vehicle.");
+		return false;
+	}
+
+	if(IsVehicle())
+	{
+		Vehicle *v = TO_VEHICLE(this);
+		if(!v->GetMaxPassengerCount())
+			return false;
+
+		if(!v->GetMaxSeat())
+			return false;
+
+		if(v->IsFull())
+			return false;
+
+		if( sEventMgr.HasEvent( v, EVENT_VEHICLE_SAFE_DELETE ) )
+			return false;
+
+		if(GetControllingPlayer())
+		{
+			Player * p = GetControllingPlayer();
+			if(p->GetGroup() == NULL)
+				return false;
+			if(!p->GetGroup()->HasMember(requester))
+				return false;
+		}
+	}
+
+	if(IsPlayer())
+	{
+		Player * p = TO_PLAYER(this);
+
+		if(p->GetVehicleEntry() == 0)
+			return false;
+
+		if(p->GetGroup() == NULL)
+			return false;
+		if(!p->GetGroup()->HasMember(requester))
+			return false;
+	}
+	return true;
+}
+
+void Unit::RemovePassenger(Unit* pPassenger)
+{
+	if(IsVehicle())
+		TO_VEHICLE(this)->RemovePassenger(pPassenger);
+	if(IsPlayer())
+		TO_PLAYER(this)->RemovePassenger(pPassenger);
 }

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <Console/BaseConsole.h>
+#include "../libs/Console/BaseConsole.h"
 
 class ConsoleSocket;
 

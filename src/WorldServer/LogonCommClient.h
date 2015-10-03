@@ -7,7 +7,7 @@
 #pragma once
 
 #include "../AuthServer/LogonOpcodes.h"
-#include <RC4Engine.h>
+#include "../libs/RC4Engine.h"
 
 class LogonCommClientSocket : public Socket
 {

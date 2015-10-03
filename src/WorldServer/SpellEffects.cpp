@@ -3048,7 +3048,7 @@ void Spell::SpellEffectSummon(uint32 i)
 		return;
 
 	SummonPropertiesEntry * spe =  NULL;
-	spe = dbcSummonProps.LookupEntryForced( m_spellInfo->EffectMiscValueB[i] );
+	spe = dbcSummonProps.LookupEntryForced( GetSpellProto()->EffectMiscValueB[i] );
 	if( spe == NULL )
 		return;
 
@@ -3068,46 +3068,36 @@ void Spell::SpellEffectSummon(uint32 i)
 	case SUMMON_TYPE_POSSESSED:
 		{
 			SummonPossessed(i);
-			break;
-		}
+		}break;
+	case SUMMON_TYPE_WILD:
+	case SUMMON_TYPE_DEMON:
 	case SUMMON_TYPE_GUARDIAN:
 		{
 			SummonGuardian(i);
-			break;
-		}
-	case SUMMON_TYPE_WILD:
-		{
-			SummonGuardian(i);
-			break;
-		}
-	case SUMMON_TYPE_DEMON:
-		{
-			SummonGuardian(i);
-			break;
-		}
+		}break;
 	case SUMMON_TYPE_TOTEM_1:
 	case SUMMON_TYPE_TOTEM_2:
 	case SUMMON_TYPE_TOTEM_3:
 	case SUMMON_TYPE_TOTEM_4:
 		{
 			SummonTotem(i);
-			break;
-		}
+		}break;
 	case SUMMON_TYPE_GHOUL:
 	case SUMMON_TYPE_SUMMON:
-	case SUMMON_TYPE_WATER_ELEMENTAL:
 		{
 			SummonCreature(i);
-			break;
-		}
+		}break;
 	case SUMMON_TYPE_CRITTER:
 		{
 			SummonNonCombatPet(i);
-			break;
-		}
+		}break;
+	case SUMMON_TYPE_LIGHTWELL:
+		{
+			SummonLightwell(i);
+		}break;
 	default:
 		{
-			SummonGuardian(i);
+			sLog.outError("Spell Id %u, has an invalid summon type %u report this to devs.", GetSpellProto()->Id, spe->Id);
 			break;
 		}
 	}
@@ -3849,11 +3839,6 @@ void Spell::SpellEffectDualWield(uint32 i)
 
 	if( !pPlayer->_HasSkillLine( SKILL_DUAL_WIELD ) )
 		 pPlayer->_AddSkillLine( SKILL_DUAL_WIELD, 1, 1 );
-
-		// Increase it by one
-		//dual wield is 1/1 , it never increases it's not even displayed in skills tab
-
-	//note: probably here must be not caster but unitVictim
 }
 
 void Spell::SummonGuardian(uint32 i) // Summon Guardian
@@ -3864,7 +3849,6 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 	uint32 cr_entry = m_spellInfo->EffectMiscValue[i];
 	uint32 level = u_caster->getLevel();
 
-	//
 	if( i != 0 && m_spellInfo->Effect[i-1] == SPELL_EFFECT_APPLY_AURA && m_spellInfo->EffectApplyAuraName[i-1] == SPELL_AURA_MOUNTED )
 	{
 		CreatureProto * cp = NULL;
@@ -3891,19 +3875,19 @@ void Spell::SummonGuardian(uint32 i) // Summon Guardian
 	}
 	else
 	{
-		//we only have 7 summon slots
+		// we only have 7 summon slots
 		damage = damage > 6 ? 6 : damage;
 
 		// it's health., or a fucked up infernal.
 		if( m_summonProperties->unk2 & 2 || m_summonProperties->Id == 711)
 			damage = 1;
 
-		//Spread spawns equally around summoner
+		// Spread spawns equally around summoner
 		float angle_for_each_spawn = damage ? - float(M_PI * 2.0f)/damage : - float(M_PI * 2.0f);
 
 		for( uint8 d = 0; d < damage; d++ )
 		{
-			//skip already filled slots
+			// skip already filled slots
 			if(u_caster->m_SummonSlots[ d ] != NULL)
 				continue;
 
@@ -5625,8 +5609,7 @@ void Spell::SpellEffectActivateObject(uint32 i) // Activate Object
 
 void Spell::SpellEffectWMODamage(uint32 i)
 {
-	if(gameObjTarget && gameObjTarget->GetInfo()->Type == GAMEOBJECT_TYPE_DESTRUCTIBLE_BUILDING)
-		gameObjTarget->TakeDamage(uint32(damage));
+	DamageGosAround(u_caster,i,damage,GetSpellProto()->Id);
 }
 
 void Spell::SpellEffectWMORepair(uint32 i)

@@ -38,6 +38,7 @@ typedef HM_NAMESPACE::hash_map<uint32, GameObject*> GameObjectSqlIdMap;
 #define MAX_TRANSPORTERS_PER_MAP 25
 
 class Transporter;
+
 #define RESERVE_EXPAND_SIZE 1024
 
 #define CALL_INSTANCE_SCRIPT_EVENT( Mgr, Func ) if ( Mgr != NULL && Mgr->GetScript() != NULL ) Mgr->GetScript()->Func
@@ -50,15 +51,15 @@ class SERVER_DECL MapMgr : public CellHandler <MapCell>, public EventableObject,
 	friend class MapScriptInterface;
 public:
 		
-	//This will be done in regular way soon
+	// This will be done in regular way soon
 
 	Mutex m_objectinsertlock;
 	ObjectSet m_objectinsertpool;
 	void AddObject(Object*);
 
-////////////////////////////////////////////////////////
-// Local (mapmgr) storage/generation of GameObjects
-/////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage/generation of GameObjects.
+	////////////////////////////////////////////////////////
 
 	typedef HM_NAMESPACE::hash_map<const uint32, GameObject* > GameObjectMap;
 	GameObjectMap m_gameObjectStorage;
@@ -77,9 +78,9 @@ public:
 		return (itr != m_gameObjectStorage.end()) ? m_gameObjectStorage[guid] : NULL;
 	}
 
-/////////////////////////////////////////////////////////
-// Local (mapmgr) storage/generation of Vehicles
-/////////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage/generation of Vehicles.
+	////////////////////////////////////////////////////////
 
 	uint32 m_VehicleArraySize;
 	uint32 m_VehicleHighGuid;
@@ -90,9 +91,11 @@ public:
 	{
 		return guid <= m_VehicleHighGuid ? m_VehicleStorage[guid] : NULL;
 	}
-/////////////////////////////////////////////////////////
-// Local (mapmgr) storage/generation of Creatures
-/////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage/generation of Creatures.
+	////////////////////////////////////////////////////////
+
 	uint32 m_CreatureArraySize;
 	uint32 m_CreatureHighGuid;
 	HM_NAMESPACE::unordered_map<const uint32,Creature*> m_CreatureStorage;
@@ -102,9 +105,11 @@ public:
 	{
 		return guid <= m_CreatureHighGuid ? m_CreatureStorage[guid] : NULL;
 	}
-//////////////////////////////////////////////////////////
-// Local (mapmgr) storage/generation of DynamicObjects
-////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage/generation of DynamicObjects.
+	////////////////////////////////////////////////////////
+
 	uint32 m_DynamicObjectHighGuid;
 	typedef HM_NAMESPACE::hash_map<const uint32, DynamicObject*> DynamicObjectStorageMap;
 	DynamicObjectStorageMap m_DynamicObjectStorage;
@@ -116,9 +121,10 @@ public:
 		return (itr != m_DynamicObjectStorage.end()) ? m_DynamicObjectStorage[guid] : NULL;
 	}
 
-//////////////////////////////////////////////////////////
-// Local (mapmgr) storage of pets
-///////////////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage of pets.
+	////////////////////////////////////////////////////////
+
 	typedef HM_NAMESPACE::hash_map<const uint32, Pet*> PetStorageMap;
 	PetStorageMap m_PetStorage;
 	__inline Pet* GetPet(const uint32 guid)
@@ -127,11 +133,11 @@ public:
 		return (itr != m_PetStorage.end()) ? m_PetStorage[guid] : NULL;
 	}
 
-//////////////////////////////////////////////////////////
-// Local (mapmgr) storage of players for faster lookup
-////////////////////////////////
-    
-    // double typedef lolz// a compile breaker..
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage of players for faster lookup
+	////////////////////////////////////////////////////////
+
+	// double typedef lolz// a compile breaker..
 	typedef HM_NAMESPACE::hash_map<const uint32, Player*> PlayerStorageMap;
 
 	PlayerStorageMap m_PlayerStorage;
@@ -141,9 +147,10 @@ public:
 		return (itr != m_PlayerStorage.end()) ? m_PlayerStorage[guid] : NULL;
 	}
 
-//////////////////////////////////////////////////////////
-// Local (mapmgr) storage of combats in progress
-////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Local (mapmgr) storage of combats in progress
+	////////////////////////////////////////////////////////
+
 	CombatProgressMap _combatProgress;
 	void AddCombatInProgress(uint64 guid)
 	{
@@ -155,18 +162,19 @@ public:
 	}
 	ARCTIC_INLINE bool IsCombatInProgress()
 	{ 
-		//temporary disabled until AI updates list correctly.
+		// temporary disabled until AI updates list correctly.
 		return false;
 
-		//if all players are out, list should be empty.
+		// if all players are out, list should be empty.
 		if(!HasPlayers())
 			_combatProgress.clear();
 		return (_combatProgress.size() > 0);
 	}
 
-//////////////////////////////////////////////////////////
-// Lookup Wrappers
-///////////////////////////////////
+	////////////////////////////////////////////////////////
+	// Lookup Wrappers
+	////////////////////////////////////////////////////////
+
 	Unit* GetUnit(const uint64 & guid);
 	Object* _GetObject(const uint64 & guid);
 
@@ -199,7 +207,7 @@ public:
 		uint16 aid = GetBaseMap()->GetAreaID(x, y);
 		if(GetMapId() == 571)
 		{
-			//dirty fix for Dalaran sanctuary
+			// dirty fix for Dalaran sanctuary
 			if( z > 500.0f && (aid == 4551 || aid == 4553 || aid == 4556 || aid == 2817))
 				return 4395;
 		}
@@ -235,7 +243,7 @@ public:
 	void EventCorpseDespawn(uint64 guid);
 
 	time_t InactiveMoveTime;
-    uint32 iInstanceMode;
+	uint32 iInstanceMode;
 
 	void UnloadCell(uint32 x,uint32 y);
 	void EventRespawnVehicle(Vehicle* v, MapCell * p);
@@ -350,17 +358,14 @@ public:
 	void RemovePositiveAuraFromPlayers(int32 iFactionMask, uint32 uAuraId);
 	void CastSpellOnPlayers(int32 iFactionMask, uint32 uSpellId);
 
-
 public:
 
 	// stored iterators for safe checking
 	PetStorageMap::iterator __pet_iterator;
 	PlayerStorageMap::iterator __player_iterator;
-
 	VehicleSet::iterator __vehicle_iterator;
 	CreatureSet::iterator __creature_iterator;
 	GameObjectSet::iterator __gameobject_iterator;
-	
 	SessionSet::iterator __session_iterator_1;
 	SessionSet::iterator __session_iterator_2;
 

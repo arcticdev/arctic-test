@@ -46,7 +46,6 @@ class SERVER_DECL Vehicle : public Creature
 public:
 	Vehicle(uint64 guid);
 	~Vehicle();
-	virtual void Destructor();
 
 	void Init();
 	void InitSeats(uint32 vehicleEntry, Player* pRider = NULL);
@@ -65,6 +64,7 @@ public:
 	void setDeathState(DeathState s);
 	void SetSpeed(uint8 SpeedType, float value);
 	void ChangeSeats(Unit* pPassenger, uint8 seatid);
+	void SetVehiclePower(VehicleEntry * v);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Accessors                                                            //
@@ -102,12 +102,14 @@ public:
 	bool Initialised;
 	bool m_CreatedFromSpell;
 	uint32 m_mountSpell;
+	uint32 m_CastSpellOnMount;
 
 private:
 	void _AddToSlot(Unit* pPassenger, uint8 slot);
 
 protected:
 	uint64 vehicleguid;
+	uint8 m_ppassengerCount;
 	Unit* m_controllingUnit;
 	Unit* m_passengers[8];
 

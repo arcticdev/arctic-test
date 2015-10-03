@@ -541,31 +541,33 @@ public:
 
 protected:
 
-	/// Spell state's
-	bool	m_usesMana;
-	bool	m_Spell_Failed;		//for 5sr
-	bool	m_Delayed;
-	uint32  m_spellState;
-	int32   m_castTime;
-	int32   m_timer;
-	bool	m_ForceConsumption;
+	// Spell state's
+	bool        m_usesMana;
+	bool        m_Spell_Failed; // for 5sr
+	bool        m_Delayed;
+	uint32      m_spellState;
+	int32       m_castTime;
+	int32       m_timer;
+	bool        m_ForceConsumption;
 
 	// Current Targets to be used in effect handler
-	Unit*	  unitTarget;
-	Item*	  itemTarget;
+	Unit*       unitTarget;
+	Item*       itemTarget;
 	GameObject* gameObjTarget;
-	Player*	 playerTarget;
-	Corpse*	 corpseTarget;
-	uint32	  add_damage;
+	Player*     playerTarget;
+	Corpse*     corpseTarget;
+	uint32      add_damage;
 
-	uint8	   cancastresult;
-	uint32	  Dur;
-	bool		bDurSet;
-	float	   Rad[3];
-	bool		bRadSet[3];
-	bool		m_cancelled;
-	bool m_isCasting;
-	bool m_projectileWait;
+	uint8       cancastresult;
+	uint32      Dur;
+	bool        bDurSet;
+	float       Rad[3];
+	bool        bRadSet[3];
+	bool        m_cancelled;
+	bool        m_isCasting;
+	bool        m_projectileWait;
+
+	void DamageGosAround(Unit*Caster,uint32 i, uint32 spell_damage, uint32 spell_id);
 
 private:
 	struct SpellTarget

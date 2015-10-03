@@ -5,12 +5,12 @@
  */
 
 #include "StdAfx.h"
-#include <svn_revision.h>
+#include "../libs/svn_revision.h"
 
-#include <Common.h>
-#include <Network/Network.h>
-#include <Config/ConfigEnv.h>
-#include <Console/BaseConsole.h>
+#include "../libs/Common.h"
+#include "../libs/Network/Network.h"
+#include "../libs/Config/ConfigEnv.h"
+#include "../libs/Console/BaseConsole.h"
 
 #include "BaseConsole.h"
 #include "ConsoleCommands.h"

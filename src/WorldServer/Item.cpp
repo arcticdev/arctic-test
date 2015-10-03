@@ -144,7 +144,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	else if( random_suffix )
 		SetRandomSuffix( random_suffix );
 
-	SetUInt32Value( ITEM_FIELD_ITEM_TEXT_ID, fields[11].GetUInt32() );
+	SetUInt32Value( ITEM_FIELD_PAD, fields[11].GetUInt32() );
 
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability );
 	SetUInt32Value( ITEM_FIELD_DURABILITY, fields[12].GetUInt32() );
@@ -167,20 +167,9 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 			if( entry && entry->Id == enchant_id )
 			{
 				AddEnchantment( entry, time_left, ( time_left == 0 ), false, false, enchslot );
-				//(enchslot != 2) ? false : true, false);
 			}
 			else
 			{
-				/*
-				EnchantEntry *pEnchant = new EnchantEntry;
-				memset(pEnchant,0,sizeof(EnchantEntry));
-
-				pEnchant->Id = enchant_id;
-				if(enchslot != 2)
-					AddEnchantment(pEnchant,0,true, false);
-				else
-					AddEnchantment(pEnchant,0,false,false);
-				*/
 			}
 		}
 	}
@@ -295,7 +284,7 @@ void Item::SaveToDB( int8 containerslot, int8 slot, bool firstsave, QueryBuffer*
 	ss << GetChargesLeft() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_FLAGS) << ",";
 	ss << random_prop << ", " << random_suffix << ", ";
-	ss << GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID) << ",";
+	ss << GetUInt32Value(ITEM_FIELD_PAD) << ",";
 	ss << GetUInt32Value(ITEM_FIELD_DURABILITY) << ",";
 	ss << static_cast<int>(containerslot) << ",";
 	ss << static_cast<int>(slot) << ",'";
@@ -313,15 +302,6 @@ void Item::SaveToDB( int8 containerslot, int8 slot, bool firstsave, QueryBuffer*
 			int32 remaining_duration = itr->second.Duration - elapsed_duration;
 			if( remaining_duration < 0 )
 				remaining_duration = 0;
-
-			/*
-			if( !itr->second.RemoveAtLogout && (remaining_duration > 5 && itr->second.Slot != 2) || itr->second.Slot == 2)  // no point saving stuff with < 5 seconds... unless is perm enchant
-			{
-				ss << itr->second.Enchantment->Id << ",";
-				ss << remaining_duration << ",";
-				ss << itr->second.Slot << ";";
-			}
-			*/
 
 			if( itr->second.Enchantment && ( remaining_duration && remaining_duration > 5 ) || ( itr->second.Duration == 0 ) )
 			{

@@ -14,14 +14,11 @@
 #undef max
 #endif
 
-#define _GAME
-
 #include <list>
 #include <vector>
 #include <map>
 #include <sstream>
 #include <string>
-//#include <fstream>
 
 #include "../libs/AuthCodes.h"
 #include "../libs/Common.h"
@@ -41,11 +38,11 @@
 
 #include "../../dep/vc/include/zlib.h"
 
-#include <DataStorage/DatabaseEnv.h>
-#include <DataStorage/DBCStores.h>
-#include <DataStorage/dbcfile.h>
+#include "../libs/DataStorage/DatabaseEnv.h"
+#include "../libs/DataStorage/DBCStores.h"
+#include "../libs/DataStorage/dbcfile.h"
 
-#include <Network/Network.h>
+#include "../libs/Network/Network.h"
 
 #include "../libs/Auth/MD5.h"
 #include "../libs/Auth/BigNumber.h"
@@ -165,4 +162,3 @@
 
 #include "Master.h"
 #include "BaseConsole.h"
-

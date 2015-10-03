@@ -27,7 +27,6 @@ public:
 		//This will become the size of the skill name lookup table
 		maxskill = SkillDBC.getRecord(SkillDBC.getRecordCount()-1).getUInt(0);
 
-		//SkillNames = (char **) malloc(maxskill * sizeof(char *));
 		SkillNames = new char * [maxskill+1]; //(+1, arrays count from 0.. not 1.)
 		memset(SkillNames,0,(maxskill+1) * sizeof(char *));
 

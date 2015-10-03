@@ -5,7 +5,8 @@
  */
 
 #include "StdAfx.h"
-#include <Console/CConsole.h>
+#include "../libs/Console/CConsole.h"
+#include "../libs/svn_revision.h"
 
 #define BANNER "WoWArcTic MMORPG Server :: WorldServer r%u/%s-%s-%s\n"
 
@@ -15,8 +16,6 @@ static const char* default_realm_config_file = "conf/Realms.conf";
 #ifndef WIN32
 #include <sched.h>
 #endif
-
-#include "svn_revision.h"
 
 #include <signal.h>
 

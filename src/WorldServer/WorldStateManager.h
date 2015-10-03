@@ -8,7 +8,6 @@
 
 /*
  * World State Manager Class
- * See doc/World State Manager.txt for implementation details
  */
 
 // forward declaration for mapmgr

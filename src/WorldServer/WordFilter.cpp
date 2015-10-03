@@ -6,7 +6,7 @@
 
 #include "StdAfx.h"
 extern "C" {
-#include "../../../dep/vc/include/pcre.h"
+#include "../../dep/vc/include/pcre.h"
 };
 
 #define REPLACE_FILTER 1

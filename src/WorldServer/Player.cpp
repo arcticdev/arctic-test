@@ -12053,3 +12053,191 @@ void Player::EventCheckCurrencies()
 	}
 	itr.EndSearch();
 }
+
+void Player::AddPassenger(Unit* unit, int8 slot)
+{
+	if(slot > 7)
+		return;
+
+	if(slot == -1)
+	{
+		for(uint8 i = 0; i < 8; i++)
+		{
+			if(m_vehicleSeats[i] != NULL && m_passengers[i] == NULL)
+				slot = i;
+		}
+	}
+
+	if(slot == -1)
+		return;
+
+	if(m_vehicleSeats[slot] == NULL)
+		return;
+
+	m_passengers[slot] = unit;
+	LocationVector v;
+	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX;
+	v.y = m_vehicleSeats[slot]->m_attachmentOffsetY;
+	v.z = m_vehicleSeats[slot]->m_attachmentOffsetZ;
+	v.o = 0;
+
+	unit->movement_info.flags |= MOVEFLAG_TAXI;
+	unit->movement_info.transX = v.x;
+	unit->movement_info.transY = v.y;
+	unit->movement_info.transZ = v.z;
+	unit->movement_info.transO = GetOrientation();
+	unit->movement_info.transSeat = slot;
+	unit->movement_info.transGuid = WoWGuid(GetGUID());
+	unit->SetVehicle(this);
+	unit->SetSeatID(slot);
+	unit->m_TransporterGUID = GetGUID();
+
+	// This is where the real magic happens
+	if( unit->IsPlayer() )
+	{
+		Player* pPlayer = TO_PLAYER(unit);
+
+		// Dismount
+		if(pPlayer->m_MountSpellId && pPlayer->m_MountSpellId != m_mountSpell)
+			pPlayer->RemoveAura(pPlayer->m_MountSpellId);
+
+		// Remove morph spells
+		if(pPlayer->GetUInt32Value(UNIT_FIELD_DISPLAYID) != pPlayer->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID))
+		{
+			pPlayer->RemoveAllAurasOfType(SPELL_AURA_TRANSFORM);
+			pPlayer->RemoveAllAurasOfType(SPELL_AURA_MOD_SHAPESHIFT);
+		}
+
+		// Dismiss any pets
+		if(pPlayer->GetSummon())
+		{
+			if(pPlayer->GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
+				pPlayer->GetSummon()->Dismiss(false);				// warlock summon -> dismiss
+			else
+				pPlayer->GetSummon()->Remove(false, true, true);	// hunter pet -> just remove for later re-call
+		}
+
+		pPlayer->SetUInt64Value(PLAYER_FARSIGHT, GetGUID());
+		pPlayer->SetPlayerStatus(TRANSFER_PENDING);
+		pPlayer->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
+
+		WorldPacket data(SMSG_MONSTER_MOVE_TRANSPORT, 100);
+		data << pPlayer->GetNewGUID();							// Passengerguid
+		data << GetNewGUID();									// Transporterguid (vehicleguid)
+		data << uint8(slot);									// Vehicle Seat ID
+		data << uint8(0);										// Unknown
+		data << GetPositionX() - pPlayer->GetPositionX();		// OffsetTransporterX
+		data << GetPositionY() - pPlayer->GetPositionY();		// OffsetTransporterY
+		data << GetPositionZ() - pPlayer->GetPositionZ();		// OffsetTransporterZ
+		data << getMSTime();									// Timestamp
+		data << uint8(0x04);									// Flags
+		data << float(0);										// Orientation Offset
+		data << uint32(MOVEFLAG_TB_MOVED);						// MovementFlags
+		data << uint32(0);										// MoveTime
+		data << uint32(1);										// Points
+		data << v.x;											// GetTransOffsetX();
+		data << v.y;											// GetTransOffsetY();
+		data << v.z;											// GetTransOffsetZ();
+		SendMessageToSet(&data, true);
+
+		data.Initialize(SMSG_CLIENT_CONTROL_UPDATE);
+		data << GetNewGUID() << uint8(0);
+		pPlayer->GetSession()->SendPacket(&data);
+
+		data.Initialize(SMSG_PET_DISMISS_SOUND);
+		data << uint32(m_vehicleSeats[slot]->m_enterUISoundID);
+		data << pPlayer->GetPosition();
+		pPlayer->GetSession()->SendPacket(&data);
+	}
+	else
+		unit->SetPosition(GetPositionX()+v.x, GetPositionY()+v.y, GetPositionZ()+v.z, GetOrientation());
+
+	SendHeartBeatMsg(false);
+
+	_setFaction();
+}
+
+void Player::RemovePassenger(Unit* pPassenger)
+{
+	if(pPassenger == NULL) // We have enough problems that we need to do this :(
+		return;
+
+	if(pPassenger == pVehicle)
+		return;
+
+	uint8 slot = pPassenger->GetSeatID();
+
+	pPassenger->SetVehicle(NULL);
+	pPassenger->SetSeatID(NULL);
+
+	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
+	if( pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_MountSpellId != m_mountSpell )
+		pPassenger->RemoveAura(TO_PLAYER(pPassenger)->m_MountSpellId);
+
+	WorldPacket data(SMSG_MONSTER_MOVE, 85);
+	data << pPassenger->GetNewGUID();			// PlayerGUID
+	data << uint8(0x40);						// Unk - blizz uses 0x40
+	data << pPassenger->GetPosition();			// Player Position xyz
+	data << getMSTime();						// Timestamp
+	data << uint8(0x4);							// Flags
+	data << pPassenger->GetOrientation();		// Orientation
+	data << uint32(MOVEFLAG_AIR_SUSPENSION);	// MovementFlags
+	data << uint32(0);							// MovementTime
+	data << uint32(1);							// Pointcount
+	data << GetPosition();						// Vehicle Position xyz
+	SendMessageToSet(&data, false);
+
+	pPassenger->movement_info.flags &= ~MOVEFLAG_TAXI;
+	pPassenger->movement_info.transX = 0;
+	pPassenger->movement_info.transY = 0;
+	pPassenger->movement_info.transZ = 0;
+	pPassenger->movement_info.transO = 0;
+	pPassenger->movement_info.transTime = 0;
+	pPassenger->movement_info.transSeat = 0;
+	pPassenger->movement_info.transGuid = WoWGuid(uint64(NULL));
+
+	if(pPassenger->IsPlayer())
+	{
+		Player* plr = TO_PLAYER(pPassenger);
+		RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_PLAYER_CONTROLLED_CREATURE | UNIT_FLAG_PLAYER_CONTROLLED));
+
+		plr->SetPlayerStatus(TRANSFER_PENDING); // We get an ack later, if we don't set this now, we get disconnected.
+		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
+		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+
+		data.Initialize(MSG_MOVE_TELEPORT_ACK);
+		data << plr->GetNewGUID();
+		data << plr->m_teleportAckCounter;
+		plr->m_teleportAckCounter++;
+		data << uint32(MOVEFLAG_FLYING);
+		data << uint16(0x40);
+		data << getMSTime();
+		data << GetPositionX();
+		data << GetPositionY();
+		data << GetPositionZ();
+		data << GetOrientation();
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
+
+		plr->SetUInt64Value( PLAYER_FARSIGHT, 0 );
+
+		data.Initialize(SMSG_PET_DISMISS_SOUND);
+		data << uint32(m_vehicleSeats[slot]->m_exitUISoundID);
+		data << plr->GetPosition();
+		plr->GetSession()->SendPacket(&data);
+
+		data.Initialize(SMSG_PET_SPELLS);
+		data << uint64(0);
+		data << uint32(0);
+		plr->GetSession()->SendPacket(&data);
+	}
+	else
+	{
+		TO_CREATURE(pPassenger)->Despawn(10000, 0);
+		pPassenger->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+	}
+
+	SendHeartBeatMsg(false);
+	m_passengers[slot] = NULL;
+	pPassenger->m_TransporterGUID = NULL; // We need to null this out
+}

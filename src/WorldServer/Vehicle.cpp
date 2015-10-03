@@ -30,11 +30,6 @@ Vehicle::~Vehicle()
 		RemoveFromWorld(false, true);
 }
 
-void Vehicle::Destructor()
-{
-	delete this;
-}
-
 void Vehicle::Init()
 {
 	Creature::Init();
@@ -171,22 +166,17 @@ bool Vehicle::Load(CreatureSpawn *spawn, uint32 mode, MapInfo *info)
 void Vehicle::SendSpells(uint32 entry, Player* plr)
 {
 	CreatureProtoVehicle* acc = CreatureProtoVehicleStorage.LookupEntry(GetEntry());
+
 	if(!acc)
-	{
-		WorldPacket data(SMSG_PET_SPELLS, 12);
-		data << uint64(0);
-		data << uint32(0);
-		plr->GetSession()->SendPacket(&data);
 		return;
-	}
 
-	uint8 count = 0;
-
-	WorldPacket data(SMSG_PET_SPELLS, 60);
-	data << uint64(GetGUID());
+	WorldPacket data(SMSG_PET_SPELLS, 78); // uint32 = 4; (10 * 6) + 4 + 4 + 2 + 8 = 78
+	data << GetGUID();
 	data << uint16(0);
 	data << uint32(0);
 	data << uint32(0x00000101);
+
+	uint8 count = 0;
 
 	// Send the actionbar
 	for(uint8 i = 0; i < 6; ++i)
@@ -200,8 +190,8 @@ void Vehicle::SendSpells(uint32 entry, Player* plr)
 		data << uint16(0) << uint8(0) << uint8(i+8);
 	}
 
-	data << uint8(0); // spells count
-	data << uint8(0); // cooldowns count
+	data << count;        // spells count
+	data << uint8(0);     // cooldowns count
 
 	plr->GetSession()->SendPacket(&data);
 }
@@ -267,7 +257,7 @@ void Vehicle::DeleteMe()
 	if(IsInWorld())
 		RemoveFromWorld(false, true);
 
-	Destructor();
+	delete this;
 }
 
 void Vehicle::AddPassenger(Unit* pPassenger)
@@ -385,23 +375,23 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	if(pPassenger == NULL) // We have enough problems that we need to do this :(
 		return;
 
-	Vehicle* pThis = TO_VEHICLE(this);
+	uint8 slot = pPassenger->GetSeatID();
 
-	uint8 slot = pPassenger->m_inVehicleSeatId;
-
-	pPassenger->m_CurrentVehicle = NULL;
-	pPassenger->m_inVehicleSeatId = 0xFF;
+	pPassenger->SetVehicle(NULL);
+	pPassenger->SetSeatID(NULL);
 
 	pPassenger->RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_UNKNOWN_5 | UNIT_FLAG_PREPARATION | UNIT_FLAG_NOT_SELECTABLE));
-	if( pPassenger->IsPlayer() )
+	if( pPassenger->IsPlayer() && TO_PLAYER(pPassenger)->m_MountSpellId != m_mountSpell )
 		pPassenger->RemoveAura(TO_PLAYER(pPassenger)->m_MountSpellId);
 
 	if( m_mountSpell )
 		pPassenger->RemoveAura( m_mountSpell );
+	if( m_CastSpellOnMount )
+		pPassenger->RemoveAura( m_CastSpellOnMount );
 
 	WorldPacket data(SMSG_MONSTER_MOVE, 85);
 	data << pPassenger->GetNewGUID();			// PlayerGUID
-	data << uint8(0);							// Unk - blizz uses 0x40
+	data << uint8(0x40);						// Unk - blizz uses 0x40
 	data << pPassenger->GetPosition();			// Player Position xyz
 	data << getMSTime();						// Timestamp
 	data << uint8(0x4);							// Flags
@@ -419,6 +409,7 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 	pPassenger->movement_info.transO = 0;
 	pPassenger->movement_info.transTime = 0;
 	pPassenger->movement_info.transSeat = 0;
+	pPassenger->movement_info.transGuid = WoWGuid(uint64(NULL));
 
 	if(pPassenger->IsPlayer())
 	{
@@ -432,9 +423,10 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		}
 		RemoveFlag(UNIT_FIELD_FLAGS, (UNIT_FLAG_PLAYER_CONTROLLED_CREATURE | UNIT_FLAG_PLAYER_CONTROLLED));
 
-		plr->SetPlayerStatus(TRANSFER_PENDING);
+		plr->SetPlayerStatus(TRANSFER_PENDING); // We get an ack later, if we don't set this now, we get disconnected.
 		plr->m_sentTeleportPosition.ChangeCoords(GetPositionX(), GetPositionY(), GetPositionZ());
 		plr->SetPosition(GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation());
+
 		data.Initialize(MSG_MOVE_TELEPORT_ACK);
 		data << plr->GetNewGUID();
 		data << plr->m_teleportAckCounter;
@@ -468,13 +460,23 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 			{
 				uint32 health = GetUInt32Value(UNIT_FIELD_HEALTH);
 				uint32 maxhealth = GetUInt32Value(UNIT_FIELD_MAXHEALTH);
+				uint32 protomaxhealth = GetProto()->MaxHealth;
 				uint32 healthdiff = maxhealth - health;
+				uint32 plritemlevel = plr->GetTotalItemLevel();
+				uint32 convrate = vehicleproto->healthunitfromitemlev;
 
-				SetUInt32Value(UNIT_FIELD_HEALTH, GetProto()->MaxHealth - (healthdiff/(((plr->GetTotalItemLevel())*(vehicleproto->healthunitfromitemlev)))));
-				SetUInt32Value(UNIT_FIELD_MAXHEALTH, GetProto()->MaxHealth);
+				if(plritemlevel != 0 && convrate != 0)
+				{
+					uint32 healthloss = healthdiff+plritemlevel*convrate;
+					SetUInt32Value(UNIT_FIELD_HEALTH, GetProto()->MaxHealth - healthloss);
+				}
+				else if(protomaxhealth > healthdiff)
+					SetUInt32Value(UNIT_FIELD_HEALTH, protomaxhealth-healthdiff);
+				else
+					SetUInt32Value(UNIT_FIELD_HEALTH, 1);
+				SetUInt32Value(UNIT_FIELD_MAXHEALTH, protomaxhealth);
 			}
 		}
-		plr->SetPlayerStatus(NONE);
 	}
 
 	if(slot == 0)
@@ -483,52 +485,44 @@ void Vehicle::RemovePassenger(Unit* pPassenger)
 		CombatStatus.Vanished();
 		pPassenger->SetUInt64Value( UNIT_FIELD_CHARM, 0 );
 		SetUInt64Value(UNIT_FIELD_CHARMEDBY, 0);
-		SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetCharmTempVal());
-		/* update target faction set */
-		_setFaction();
-		UpdateOppFactionSet();
 
-		//GetAIInterface()->SetAIState(STATE_IDLE);
-		GetAIInterface()->WipeHateList();
-		GetAIInterface()->WipeTargetList();
-		EnableAI();
-		//Despawn(0,1000);
+		if(!m_faction || m_faction->ID == 35 || m_faction->ID == 2105)
+			SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, GetCharmTempVal());
+		RemoveAura(62064);
 	}
 
+	SendHeartBeatMsg(false);
 	m_passengers[slot] = NULL;
+	pPassenger->m_TransporterGUID = NULL; // We need to null this out
+	if(pPassenger->IsPlayer())
+		--m_ppassengerCount;
+
 	//note: this is not blizz like we should despawn
 	//and respawn at spawn point.
 	//Well actually this is how blizz wanted it
 	//but they couldnt get it to work xD
 	bool haspassengers = false;
-	for(uint8 i = 0; i < m_seatSlotMax; ++i)
+	for(uint8 i = 0; i < m_seatSlotMax; i++)
 	{
-		if(m_passengers[i] != NULL)
+		if(m_passengers[i] != NULL && m_passengers[i]->IsPlayer())
 		{
 			haspassengers = true;
 			break;
 		}
 	}
 
-	if(!haspassengers)
+	if(!haspassengers && !GetVehicle()) // Passenger and accessory checks.
 	{
-		if( m_spawn )
-			GetAIInterface()->MoveTo(m_spawn->x, m_spawn->y, m_spawn->z, m_spawn->o);
-		else //we're a temp spawn
+		if( m_spawn == NULL )
 			SafeDelete();
 	}
 
-	// We need to null this out, its changed automatically.
-	if(m_TransporterGUID) // Vehicle has a transport guid?
-		pPassenger->m_TransporterGUID = m_TransporterGUID;
-	else
-		pPassenger->m_TransporterGUID = NULL;
-
-	if(pPassenger->IsPlayer())
-		--m_passengerCount;
-
 	if(!IsFull())
 		SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_SPELLCLICK);
+
+	if(canFly())
+		DisableFlight();
+	_setFaction();
 }
 
 bool Vehicle::HasPassenger(Unit* pPassenger)
@@ -558,7 +552,7 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 	pPassenger->m_inVehicleSeatId = slot;
 	//pPassenger->m_TransporterGUID = GetGUID();
 	LocationVector v;
-	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX; /* pPassenger->m_TransporterX =*/
+	v.x = m_vehicleSeats[slot]->m_attachmentOffsetX; /* pPassenger->m_TransporterX = */
 	v.y = m_vehicleSeats[slot]->m_attachmentOffsetY; /* pPassenger->m_TransporterY = */
 	v.z = m_vehicleSeats[slot]->m_attachmentOffsetZ; /* pPassenger->m_TransporterZ = */
 	v.o = 0; /* pPassenger->m_TransporterO = */
@@ -577,14 +571,14 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 		if(pPlayer->m_MountSpellId)
 			pPlayer->RemoveAura(pPlayer->m_MountSpellId);
 	
-		//Remove morph spells
+		// Remove morph spells
 		if(pPlayer->GetUInt32Value(UNIT_FIELD_DISPLAYID)!= pPlayer->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID))
 		{
 			pPlayer->RemoveAllAurasOfType(SPELL_AURA_TRANSFORM);
 			pPlayer->RemoveAllAurasOfType(SPELL_AURA_MOD_SHAPESHIFT);
 		}
 
-		//Dismiss any pets
+		// Dismiss any pets
 		if(pPlayer->GetSummon())
 		{
 			if(pPlayer->GetSummon()->GetUInt32Value(UNIT_CREATED_BY_SPELL) > 0)
@@ -659,6 +653,8 @@ void Vehicle::_AddToSlot(Unit* pPassenger, uint8 slot)
 			UpdateOppFactionSet();
 
 			SendSpells(GetEntry(), pPlayer);
+			GetMovementInfo()->flags = vehicleproto->MovementFlags; 
+			SetVehiclePower(dbcVehicle.LookupEntry(GetVehicleEntry()));
 		}
 
 		data.Initialize(SMSG_PET_DISMISS_SOUND);
@@ -722,6 +718,25 @@ void Vehicle::setDeathState(DeathState s)
 
 	if( s == JUST_DIED && m_CreatedFromSpell)
 		SafeDelete();
+}
+
+void Vehicle::SetVehiclePower(VehicleEntry * v)
+{
+	switch (v->m_powerType)
+	{
+		case 61:
+		case 141:
+		case 121:
+		SetPowerType(POWER_TYPE_ENERGY);
+		SetMaxPower(POWER_ENERGY, 100);
+		break;
+		case 41:
+		SetPowerType(POWER_ENERGY);
+		SetMaxPower(POWER_ENERGY, 50);
+		break;
+		default:
+		break;
+	}
 }
 
 void Vehicle::SetSpeed(uint8 SpeedType, float value)

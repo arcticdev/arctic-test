@@ -5,7 +5,7 @@
  */
 
 #include "StdAfx.h"
-#include "svn_revision.h"
+#include "../libs/svn_revision.h"
 
 #define BUG_TRACKER "https://github.com/arcticdev/arcticdev/issues"
 
@@ -605,7 +605,6 @@ void WorldSession::HandleCharRenameOpcode(WorldPacket & recv_data)
 	m_lastEnumTime = 0;
 }
 
-
 void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 {
 	CHECK_PACKET_SIZE(recv_data, 8);
@@ -618,10 +617,10 @@ void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 	//Better validate this Guid before we create an invalid _player.
 	uint8 response = CHAR_LOGIN_NO_CHARACTER;
 
-	//already active?
+	// already active?
 	if(objmgr.GetPlayer((uint32)playerGuid) != NULL || m_loggingInPlayer || _player)
 		response = CHAR_LOGIN_DUPLICATE_CHARACTER;
-	else //Do we exist in DB yet?
+	else // Do we exist in DB yet?
 	{
 		PlayerInfo * plrInfo = objmgr.GetPlayerInfo(playerGuid);
 		if( plrInfo )
@@ -634,7 +633,7 @@ void WorldSession::HandlePlayerLoginOpcode( WorldPacket & recv_data )
 		return;
 	}
 
-	//We have a valid Guid so let's create the player and login
+	// We have a valid Guid so let's create the player and login
 	Player* plr = new Player((uint32)playerGuid);
 	plr->Init();
 	plr->SetSession(this);
@@ -682,21 +681,6 @@ void WorldSession::FullLogin(Player* plr)
 	vwpck.Z = plr->GetPositionZ();
 	OutPacket( SMSG_LOGIN_VERIFY_WORLD, sizeof(packetSMSG_LOGIN_VERIFY_WORLD), &vwpck );
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	// send voicechat state - active/inactive
-	//
-	// {SERVER} Packet: (0x03C7) UNKNOWN PacketSize = 2
-	// |------------------------------------------------|----------------|
-	// |00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F |0123456789ABCDEF|
-	// |------------------------------------------------|----------------|
-	// |02 01                                           |..              |
-	// -------------------------------------------------------------------
-	//
-	//
-	// Old packetdump is OLD. This is probably from 2.2.0 (that was the patch when it was added to wow)!
-	//
-	//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	plr->UpdateAttackSpeed();
 
 	// Make sure our name exists (for premade system)
@@ -715,6 +699,9 @@ void WorldSession::FullLogin(Player* plr)
 		info->lastZone = plr->GetZoneId();
 		info->race = plr->getRace();
 		info->team = plr->GetTeam();
+		info->guild = NULL;
+		info->guildRank = NULL;
+		info->m_Group = NULL;
 		objmgr.AddPlayerInfo(info);
 	}
 	plr->m_playerInfo = info;
@@ -796,7 +783,8 @@ void WorldSession::FullLogin(Player* plr)
 			float c_tposx = pTrans->GetPositionX() + plr->m_transportPosition->x;
 			float c_tposy = pTrans->GetPositionY() + plr->m_transportPosition->y;
 			float c_tposz = pTrans->GetPositionZ() + plr->m_transportPosition->z;
-			if(plr->GetMapId() != pTrans->GetMapId())								// loaded wrong map
+
+			if(plr->GetMapId() != pTrans->GetMapId()) // loaded wrong map
 			{
 				plr->SetMapId(pTrans->GetMapId());
 
@@ -832,7 +820,7 @@ void WorldSession::FullLogin(Player* plr)
 	// Login time, will be used for played time calc
 	plr->m_playedtime[2] = uint32(UNIXTIME);
 
-	//Issue a message telling all guild members that this player has signed on
+	// Issue a message telling all guild members that this player has signed on
 	if(plr->IsInGuild())
 	{
 		Guild *pGuild = plr->m_playerInfo->guild;
@@ -842,10 +830,12 @@ void WorldSession::FullLogin(Player* plr)
 			data.Initialize(SMSG_GUILD_EVENT);
 			data << uint8(GUILD_EVENT_MOTD);
 			data << uint8(0x01);
+
 			if(pGuild->GetMOTD())
 				data << pGuild->GetMOTD();
 			else
 				data << uint8(0);
+
 			SendPacket(&data);
 
 			pGuild->LogGuildEvent(GUILD_EVENT_HASCOMEONLINE, 1, plr->GetName());
@@ -870,13 +860,13 @@ void WorldSession::FullLogin(Player* plr)
 	if( plr->m_isResting) 		// We are in a resting zone, turn on Zzz
 		plr->ApplyPlayerRestState(true);
 
-	//Check if there is a time difference between lastlogoff and now
-	if( plr->m_timeLogoff > 0 && plr->GetUInt32Value(UNIT_FIELD_LEVEL) < plr->GetUInt32Value(PLAYER_FIELD_MAX_LEVEL))	// if timelogoff = 0 then it's the first login
+	// Calculate rest bonus if there is time between lastlogoff and now
+	if( plr->m_timeLogoff > 0 && plr->GetUInt32Value(UNIT_FIELD_LEVEL) < plr->GetUInt32Value(PLAYER_FIELD_MAX_LEVEL)) // if timelogoff = 0 then it's the first login
 	{
 		uint32 currenttime = (uint32)UNIXTIME;
 		uint32 timediff = currenttime - plr->m_timeLogoff;
 
-		//Calculate rest bonus
+		// Calculate rest bonus
 		if( timediff > 0 )
 			plr->AddCalculatedRestXP(timediff);
 	}

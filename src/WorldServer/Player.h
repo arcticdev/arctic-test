@@ -2220,6 +2220,8 @@ public:
 	ARCTIC_INLINE const uint8 *GetTalentInspectBuffer() { return m_talentInspectBuffer; }
 	void UpdateTalentInspectBuffer();
 	static void InitializeTalentInspectSupport();
+	void AddPassenger(Unit* unit, int8 slot = -1);
+	void RemovePassenger(Unit* pPassenger);
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);

@@ -758,7 +758,7 @@ enum INVIS_FLAG
 	INVIS_FLAG_TOTAL
 };
 
-enum FIELD_PADDING//Since this field isnt used you can expand it for you needs
+enum FIELD_PADDING // Since this field isnt used you can expand it for you needs
 {
 	PADDING_NONE
 };
@@ -860,7 +860,7 @@ public:
 
 	void OnDamageDealt(Unit* pTarget, uint32 damage);					// this is what puts the other person in combat.
 	void WeHealed(Unit* pHealTarget);									// called when a player heals another player, regardless of combat state.
-	void RemoveAttackTarget(Unit* pTarget);							// means our DoT expired.
+	void RemoveAttackTarget(Unit* pTarget);								// means our DoT expired.
 	void ForceRemoveAttacker(const uint64& guid);						// when target is invalid pointer
 
 	void UpdateFlag();													// detects if we have changed combat state (in/out), and applies the flag.
@@ -1048,6 +1048,7 @@ public:
 
 	// Add Aura to unit
 	void AddAura(Aura* aur);
+
 	// Remove aura from unit
 	void RemoveAura(Aura* aur);
 	void RemoveAuraBySlot(uint16 Slot);
@@ -1068,7 +1069,7 @@ public:
 	// Remove all auras
 	void RemoveAllAuras();
 	bool RemoveAllAuras(uint32 spellId,uint64 guid = 0); //remove stacked auras but only if they come from the same caster. Shaman purge If GUID = 0 then removes all auras with this spellid
-    void RemoveAllAurasOfType(uint32 auratype);//ex:to remove morph spells
+	void RemoveAllAurasOfType(uint32 auratype);//ex:to remove morph spells
 	bool RemoveAllAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllPosAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
 	bool RemoveAllNegAuraByNameHash(uint32 namehash);//required to remove weaker instances of a spell
@@ -1256,9 +1257,50 @@ public:
 	/* Vehicle                                                              */
 	/************************************************************************/
 
+	uint32 m_vehicleEntry;
+
 	uint8 m_inVehicleSeatId;
 	Vehicle* m_CurrentVehicle;
+	bool ExitingVehicle;
+	bool ChangingSeats;
+	Player* pVehicle;
+	bool seatisusable[8];
+	Unit* m_passengers[8];
+	uint32 m_mountSpell;
+	VehicleSeatEntry* m_vehicleSeats[8];
+	Unit* GetControllingUnit() { return m_passengers[0]; }
+	Player* GetControllingPlayer() { return (m_passengers[0] ? m_passengers[0]->IsPlayer() ? TO_PLAYER(m_passengers[0]) : NULL : NULL); }
+
+	void RemovePassenger(Unit* passenger);
+	uint32 GetVehicleEntry() { return m_vehicleEntry; };
+	void SetVehicleEntry(uint32 entry) { m_vehicleEntry = entry; }
+
 	ARCTIC_INLINE int8 GetSeatID() { return m_inVehicleSeatId; }
+	ARCTIC_INLINE Unit* GetVehicle(bool forcevehicle = false)
+	{
+		if(m_CurrentVehicle)
+			return TO_UNIT(m_CurrentVehicle);
+		if(pVehicle && !forcevehicle)
+			return TO_UNIT(pVehicle);
+		return NULL;
+	}
+	void SetSeatID(int8 seat) { m_inVehicleSeatId = seat; }
+	void SetVehicle(Unit *v)
+	{
+		if(v == NULL)
+		{
+			m_CurrentVehicle = NULL;
+			pVehicle = NULL;
+			return;
+		}
+
+		if(v->IsVehicle())
+			m_CurrentVehicle = TO_VEHICLE(v);
+		else if(v->IsPlayer())
+			pVehicle = TO_PLAYER(v);
+	}
+
+	bool CanEnterVehicle(Player * requester);
 
 	// Pet
 	ARCTIC_INLINE void SetIsPet(bool chck) { m_isPet = chck; }
@@ -1277,7 +1319,7 @@ public:
 
 	std::map<uint32,Aura* > tmpAura;
 
-	uint32 BaseResistance[7]; //there are resistances for silence, fear, mechanics ....
+	uint32 BaseResistance[7]; // there are resistances for silence, fear, mechanics ....
 	uint32 BaseStats[5];
 	int32 HealDoneMod[7];
 	float HealDonePctMod[7];
@@ -1509,6 +1551,8 @@ public:
 	LocationVector* m_transportPosition;
 	float m_TransporterUnk;
 	bool m_lockTransportVariables;
+	uint32 GetMaxPower( uint32 index ){ return GetUInt32Value( UNIT_FIELD_MAXPOWER1 + index ); }
+	void SetMaxPower( uint32 index, uint32 value ){SetUInt32Value(UNIT_FIELD_MAXPOWER1+index,value );}
 
 	// Movement Info.
 	MovementInfo* GetMovementInfo() { return &movement_info; }
@@ -1538,9 +1582,6 @@ protected:
 	uint32 m_stealthLevel;
 	uint32 m_stealthDetectBonus;
 
-	// DK:pet
-	// uint32 m_pet_state;
-	// uint32 m_pet_action;
 	uint8 m_PetTalentPointModifier;
 
 	// Spell currently casting
@@ -1567,4 +1608,7 @@ protected:
 	uint32 m_charmtemp;
 
 	HM_NAMESPACE::hash_map<uint32, SpellEntry*> m_DummyAuras;
+
+public:
+	void SendHeartBeatMsg( bool toself );
 };

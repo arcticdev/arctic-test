@@ -316,39 +316,6 @@ void Creature::SaveToDB()
 
 void Creature::SaveToFile(std::stringstream & name)
 {
-/*
-	FILE * OutFile;
-
-	OutFile = fopen(name.str().c_str(), "wb");
-	if (!OutFile) return;
-
-	uint32 creatureEntry = GetUInt32Value(OBJECT_FIELD_ENTRY);
-	if (!m_sqlid)
-		m_sqlid = objmgr.GenerateLowGuid(HIGHGUID_UNIT);
-
-	std::stringstream ss;
-	ss << "DELETE FROM creatures WHERE id=" << m_sqlid;
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-
-	ss.rdbuf()->str("");
-	ss << "\nINSERT INTO creatures (id, mapId, zoneId, name_id, positionX, positionY, positionZ, orientation, moverandom, running, data) VALUES ( "
-		<< m_sqlid << ", "
-		<< GetMapId() << ", "
-		<< GetZoneId() << ", "
-		<< GetUInt32Value(OBJECT_FIELD_ENTRY) << ", "
-		<< m_position.x << ", "
-		<< m_position.y << ", "
-		<< m_position.z << ", "
-		<< m_position.o << ", "
-		<< GetAIInterface()->getMoveType() << ", "
-		<< GetAIInterface()->getMoveRunFlag() << ", '";
-	for( uint16 index = 0; index < m_valuesCount; index ++ )
-		ss << GetUInt32Value(index) << " ";
-
-	ss << "' )";
-	fwrite(ss.str().c_str(),1,ss.str().size(),OutFile);
-	fclose(OutFile);
-*/
 }
 
 void Creature::LoadScript()
@@ -616,7 +583,6 @@ void Creature::CalcStat(uint32 type)
 	SetUInt32Value(UNIT_FIELD_STAT0+type,res>0?res:0);
 }
 
-
 void Creature::RegenerateHealth(bool isinterrupted)
 {
 	if(m_limbostate || !m_canRegenerateHP || isinterrupted)
@@ -726,6 +692,7 @@ void Creature::ModAvItemAmount(uint32 itemid, uint32 value)
 		}
 	}
 }
+
 void Creature::UpdateItemAmount(uint32 itemid)
 {
 	for(std::vector<CreatureItem>::iterator itr = m_SellItems->begin(); itr != m_SellItems->end(); itr++)

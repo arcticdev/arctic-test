@@ -5,7 +5,7 @@
  */
 
 #include "StdAfx.h"
-#include <svn_revision.h>
+#include "../libs/svn_revision.h"
 #include "ConsoleCommands.h"
 
 bool HandleInfoCommand(BaseConsole * pConsole, int argc, const char * argv[])

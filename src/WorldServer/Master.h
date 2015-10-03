@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Common.h"
-#include "Config/ConfigEnv.h"
-#include "DataStorage/DatabaseEnv.h"
+#include "../libs/Common.h"
+#include "../libs/Config/ConfigEnv.h"
+#include "../libs/DataStorage/DatabaseEnv.h"
 #include "MainServerDefines.h"
 
 #ifndef _VERSION

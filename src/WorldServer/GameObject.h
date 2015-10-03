@@ -97,13 +97,13 @@ enum GAMEOBJECT_TYPES
 
 enum GameObjectFlags
 {
-	GO_FLAG_IN_USE          = 0x01,                         //disables interaction while animated
-	GO_FLAG_LOCKED          = 0x02,                         //require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip
-	GO_FLAG_INTERACT_COND   = 0x04,                         //cannot interact (condition to interact)
-	GO_FLAG_TRANSPORT       = 0x08,                         //any kind of transport? Object can transport (elevator, boat, car)
+	GO_FLAG_IN_USE          = 0x01,                         // disables interaction while animated
+	GO_FLAG_LOCKED          = 0x02,                         // require key, spell, event, etc to be opened. Makes "Locked" appear in tooltip
+	GO_FLAG_INTERACT_COND   = 0x04,                         // cannot interact (condition to interact)
+	GO_FLAG_TRANSPORT       = 0x08,                         // any kind of transport? Object can transport (elevator, boat, car)
 	GO_FLAG_UNK1            = 0x10,                         //
-	GO_FLAG_NODESPAWN       = 0x20,                         //never despawn, typically for doors, they just change state
-	GO_FLAG_TRIGGERED       = 0x40,                         //typically, summoned objects. Triggered by spell or other events
+	GO_FLAG_NODESPAWN       = 0x20,                         // never despawn, typically for doors, they just change state
+	GO_FLAG_TRIGGERED       = 0x40,                         // typically, summoned objects. Triggered by spell or other events
 	GO_FLAG_DAMAGED			= 0x200,
 	GO_FLAG_DESTROYED		= 0x400,
 };
@@ -139,19 +139,17 @@ public:
 	void Spawn( MapMgr* m);
 	void Despawn(uint32 time);
 
-	//void _EnvironmentalDamageUpdate();
 	void UpdateTrapState();
 	// Serialization
 	void SaveToDB();
 	void SaveToFile(std::stringstream & name);
-	//bool LoadFromDB(uint32 guid);
-	//void LoadFromDB(GameObjectTemplate *t);
+
 	void DeleteFromDB();
 	void EventCloseDoor();
 	uint64 m_rotation;
 	void UpdateRotation(float orientation3 = 0.0f, float orientation4 = 0.0f);
 
-	//Fishing stuff
+	// Fishing stuff
 	void UseFishingNode(Player* player);
 	void EndFishing(Player* player,bool abort);
 	void FishHooked(Player* player);
@@ -186,7 +184,7 @@ public:
 			return false;
 	};
 
-	/// Quest data
+	// Quest data
 	std::list<QuestRelation *>* m_quests;
 
 	uint32 *m_ritualmembers;
@@ -199,8 +197,8 @@ public:
 	float range;
 	uint8 checkrate;
 	uint16 counter;
-	int32 charges;//used for type==22,to limit number of usages.
-	bool invisible;//invisible
+	int32 charges; // used for type==22,to limit number of usages.
+	bool invisible; // invisible
 	uint8 invisibilityFlag;
 	Unit* m_summoner;
 	int8 bannerslot;
@@ -211,7 +209,7 @@ public:
 
 	ARCTIC_INLINE GameObjectAIScript* GetScript() { return myScript; }
 
-	void TrapSearchTarget();	// Traps need to find targets faster :P
+	void TrapSearchTarget(); // Traps need to find targets faster :P
 
 	ARCTIC_INLINE bool HasAI() { return spell != 0; }
 	GOSpawn * m_spawn;
@@ -239,9 +237,9 @@ public:
 	void SetState(uint8 state);
 	uint8 GetState();
 
-	//Destructable Building
+	// Destructable Building
 	uint32 Health;
-	void TakeDamage(uint32 ammount);
+	void TakeDamage(uint32 amount, Object* mcaster, Object* pcaster, uint32 spellid);
 	void Rebuild();
 
 protected:
@@ -251,8 +249,6 @@ protected:
 	GameObjectInfo *pInfo;
 	GameObjectAIScript * myScript;
 	uint32 _fields[GAMEOBJECT_END];
-	uint32 mines_remaining; //used for mining to mark times it can be mined
+	uint32 mines_remaining; // used for mining to mark times it can be mined
 
 };
-
-#pragma once

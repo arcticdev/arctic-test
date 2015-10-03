@@ -1188,7 +1188,7 @@ enum Opcodes
     CMSG_FLOOD_GRACE_CHEAT                          = 0x497,
     SMSG_SERVER_FIRST_ACHIEVEMENT                   = 0x498,
     SMSG_PET_LEARNED_SPELL                          = 0x499,
-    SMSG_PET_REMOVED_SPELL                          = 0x49A,
+    SMSG_PET_UNLEARNED_SPELL                        = 0x49A, // uint16 spellid, Your pet unlearned %s
     CMSG_CHANGE_SEATS_ON_CONTROLLED_VEHICLE         = 0x49B,
     CMSG_HEARTH_AND_RESURRECT                       = 0x49C, // not changed in 3.1
     SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA       = 0x49D, // not changed 9626
@@ -1202,7 +1202,7 @@ enum Opcodes
     UMSG_UNKNOWN_1189                               = 0x4A5, // not found, old SMSG_PET_GUIDS
     SMSG_BATTLEGROUND_INFO_THROTTLED                = 0x4A6, // empty, "You can't do that yet"
     SMSG_PLAYER_VEHICLE_DATA                        = 0x4A7, // smsg guid+uint32 (vehicle) EVENT_PLAYER_GAINS_VEHICLE_DATA/EVENT_PLAYER_LOSES_VEHICLE_DATA
-    CMSG_BOARD_PLAYER_VEHICLE                       = 0x4A8, // cmsg uint64
+    CMSG_PLAYER_VEHICLE_ENTER                       = 0x4A8, // cmsg uint64
     CMSG_EJECT_PASSENGER                            = 0x4A9, // cmsg uint64
     SMSG_PET_GUIDS                                  = 0x4AA, // shifted+5
     SMSG_CLIENTCACHE_VERSION                        = 0x4AB, // shifted+5

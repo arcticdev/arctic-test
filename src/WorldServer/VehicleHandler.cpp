@@ -7,8 +7,7 @@
 #include "StdAfx.h"
 
 /* This function handles the packet sent from the client when we
-leave a vehicle, it removes us server side from our current
-vehicle*/
+leave a vehicle, it removes us server side from our current vehicle*/
 void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 {
 	if(GetPlayer() == NULL || !GetPlayer()->m_CurrentVehicle)
@@ -22,12 +21,10 @@ void WorldSession::HandleVehicleDismiss(WorldPacket & recv_data)
 
 /* This function handles the packet from the client which is
 sent when we click on an npc with the flag UNIT_FLAG_SPELLCLICK
-and checks if there is room for us then adds us as a passenger
-to that vehicle*/
+and checks if there is room for us then adds us as a passenger to that vehicle*/
 void WorldSession::HandleSpellClick( WorldPacket & recv_data )
 {
-	if (GetPlayer() == NULL || GetPlayer()->m_CurrentVehicle)
-		return;
+	CHECK_INWORLD_RETURN;
 
 	CHECK_PACKET_SIZE(recv_data, 8);
 
@@ -82,7 +79,7 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	WoWGuid Vehicleguid;
 	uint8 RequestedSeat;
 
-	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_SWITCH_SEAT)
+	if(recv_data.GetOpcode() == CMSG_REQUEST_VEHICLE_PREV_SEAT)
 	{
 		recv_data >> Vehicleguid;
 		recv_data >> RequestedSeat;
@@ -122,4 +119,47 @@ void WorldSession::HandleRequestSeatChange( WorldPacket & recv_data )
 	}
 
 	vehicle->ChangeSeats(GetPlayer(), RequestedSeat);
+}
+
+void WorldSession::HandleVehicleMountEnter( WorldPacket & recv_data )
+{
+	CHECK_INWORLD_RETURN;
+	uint64 guid;
+	recv_data >> guid;
+	if(GET_TYPE_FROM_GUID(guid) == HIGHGUID_TYPE_PLAYER)
+	{
+		Player *plr = objmgr.GetPlayer((uint32)guid);
+		if(plr == NULL)
+			return;
+
+		if(!plr->CanEnterVehicle(_player))
+			return;
+
+		plr->AddPassenger(_player,-1);
+	}
+}
+
+void WorldSession::HandleEjectPassenger( WorldPacket & recv_data )
+{
+	CHECK_INWORLD_RETURN;
+	uint64 guid;
+	recv_data >> guid;
+	if(!_player->GetVehicle())
+	{
+		return;
+	}
+
+	Unit* u = _player->GetMapMgr()->GetUnit(guid);
+	if(!u)
+	{
+		OUT_DEBUG("CMSG_EJECT_PASSENGER couldn't find unit with recv'd guid %u.", guid);
+		return;
+	}
+	if((u->GetVehicle() != _player->GetVehicle() || !u->GetVehicle()) && !(HasGMPermissions() && sWorld.no_antihack_on_gm))
+	{
+		return;
+	}
+	_player->GetVehicle()->RemovePassenger(u);
+	if(u->IsCreature())
+		TO_CREATURE(u)->SafeDelete();
 }
