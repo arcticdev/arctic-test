@@ -253,11 +253,7 @@ void CStackWalker::OnCallstackEntry(CallstackEntryType eType, CallstackEntry &en
 
 void CStackWalker::OnOutput(LPCSTR szText)
 {
-	std::string s;
-	if(m_sharedptrlog)
-		s = FormatOutputString("logs", "SharedPtrLog", false);
-	else
-		s = FormatOutputString("logs", "CrashLog", false);
+	std::string s = FormatOutputString("logs", "CrashLog", false);
 	FILE * m_file = fopen(s.c_str(), "a");
 	if(!m_file) return;
 
@@ -267,7 +263,6 @@ void CStackWalker::OnOutput(LPCSTR szText)
 }
 
 bool died = false;
-
 
 int __cdecl HandleCrash(PEXCEPTION_POINTERS pExceptPtrs)
 {

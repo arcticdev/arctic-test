@@ -7,9 +7,9 @@
 #ifndef G3D_ARRAY_H
 #define G3D_ARRAY_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/debug.h"
-#include "Collision/g3dlite/G3D/System.h"
+#include "platform.h"
+#include "debug.h"
+#include "System.h"
 #include <vector>
 #include <algorithm>
 

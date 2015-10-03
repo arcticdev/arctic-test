@@ -8,11 +8,10 @@
 #define _AUTH_SHA1_H
 
 #include <stdlib.h>
-#include "Common.h"
 
+#include "../Common.h"
 #include "../../../dep/VC/include/openssl/sha.h"
-
-#include "Auth/BigNumber.h"
+#include "BigNumber.h"
 
 class Sha1Hash
 {

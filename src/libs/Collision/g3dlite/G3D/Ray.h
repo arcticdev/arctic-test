@@ -7,9 +7,9 @@
 #ifndef G3D_RAY_H
 #define G3D_RAY_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/Triangle.h"
+#include "platform.h"
+#include "Vector3.h"
+#include "Triangle.h"
 
 namespace G3D {
 

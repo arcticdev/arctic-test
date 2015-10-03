@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include "../Common.h"
 #include "HMAC.h"
-#include "RC4Engine.h"
+#include "../RC4Engine.h"
 #include "BigNumber.h"
 #include <vector>
 

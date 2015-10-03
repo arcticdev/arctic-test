@@ -7,8 +7,8 @@
 #ifndef VECTOR2INT16_H
 #define VECTOR2INT16_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/g3dmath.h"
+#include "platform.h"
+#include "g3dmath.h"
 
 namespace G3D {
 

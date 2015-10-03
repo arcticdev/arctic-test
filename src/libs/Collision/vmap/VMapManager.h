@@ -13,7 +13,7 @@
 #include "IVMapManager.h"
 #include "../LocationVector.h"
 
-#include <Collision/g3dlite/G3D/Table.h>
+#include "../g3dlite/G3D/Table.h"
 
 //===========================================================
 

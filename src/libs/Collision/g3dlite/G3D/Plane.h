@@ -7,9 +7,9 @@
 #ifndef G3D_PLANE_H
 #define G3D_PLANE_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/Vector4.h"
+#include "platform.h"
+#include "Vector3.h"
+#include "Vector4.h"
 
 namespace G3D {
 

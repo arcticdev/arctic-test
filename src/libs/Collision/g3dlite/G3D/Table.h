@@ -7,12 +7,12 @@
 #ifndef G3D_TABLE_H
 #define G3D_TABLE_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Array.h"
-#include "Collision/g3dlite/G3D/debug.h"
-#include "Collision/g3dlite/G3D/System.h"
-#include "Collision/g3dlite/G3D/g3dmath.h"
-#include "Collision/g3dlite/G3D/Crypto.h"
+#include "platform.h"
+#include "Array.h"
+#include "debug.h"
+#include "System.h"
+#include "g3dmath.h"
+#include "Crypto.h"
 #include <assert.h>
 #include <string>
 #include <locale>

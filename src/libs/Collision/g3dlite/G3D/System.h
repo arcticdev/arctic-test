@@ -7,14 +7,13 @@
 #ifndef G3D_SYSTEM_H
 #define G3D_SYSTEM_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/g3dmath.h"
+#include "../../Collision/g3dlite/G3D/platform.h"
+#include "../../Collision/g3dlite/G3D/g3dmath.h"
 #include <string>
 
 #ifdef G3D_OSX
 #	include <CoreServices/CoreServices.h>
 #endif
-
 
 namespace G3D {
 

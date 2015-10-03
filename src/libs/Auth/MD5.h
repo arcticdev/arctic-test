@@ -11,7 +11,7 @@
 
 #include "../../../dep/VC/include/openssl/md5.h"
 
-#include "Common.h"
+#include "../Common.h"
 
 class MD5Hash
 {

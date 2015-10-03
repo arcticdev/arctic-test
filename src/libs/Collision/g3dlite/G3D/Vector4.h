@@ -7,10 +7,10 @@
 #ifndef G3D_VECTOR4_H
 #define G3D_VECTOR4_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/g3dmath.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/Vector2.h"
+#include "platform.h"
+#include "g3dmath.h"
+#include "Vector3.h"
+#include "Vector2.h"
 #include <string>
 
 namespace G3D {

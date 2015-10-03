@@ -7,7 +7,7 @@
 #ifndef __CConsole_LIB
 #define __CConsole_LIB
 
-#include "Common.h"
+#include "../libs/Common.h"
 
 class ConsoleThread : public ThreadContext
 {

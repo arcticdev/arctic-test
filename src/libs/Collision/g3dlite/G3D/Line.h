@@ -7,8 +7,8 @@
 #ifndef G3D_LINE_H
 #define G3D_LINE_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
+#include "platform.h"
+#include "Vector3.h"
 
 namespace G3D {
 

@@ -7,10 +7,10 @@
 #ifndef G3D_AABOX_H
 #define G3D_AABOX_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/debug.h"
-#include "Collision/g3dlite/G3D/Array.h"
+#include "platform.h"
+#include "Vector3.h"
+#include "debug.h"
+#include "Array.h"
 
 namespace G3D {
 

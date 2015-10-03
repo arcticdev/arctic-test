@@ -7,10 +7,10 @@
 #ifndef G3D_BOX_H
 #define G3D_BOX_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/Array.h"
-#include "Collision/g3dlite/G3D/Plane.h"
+#include "platform.h"
+#include "Vector3.h"
+#include "Array.h"
+#include "Plane.h"
 
 namespace G3D {
 

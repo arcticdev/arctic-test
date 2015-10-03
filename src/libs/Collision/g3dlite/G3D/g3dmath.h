@@ -7,7 +7,7 @@
 #ifndef G3DMATH_H
 #define G3DMATH_H
 
-#include "Common.h" // for uint32, etc typedefs
+#include "../../../Common.h" // for uint32, etc typedefs
 
 #ifdef _MSC_VER
 // Disable conditional expression is constant, which occurs incorrectly on inlined functions
@@ -17,7 +17,7 @@
 #   pragma warning (disable : 4530)
 #endif
 
-#include "Collision/g3dlite/G3D/platform.h"
+#include "platform.h"
 #include <ctype.h>
 #include <string>
 #include <float.h>
@@ -37,7 +37,7 @@
 
 #include <math.h>
 
-#include "Collision/g3dlite/G3D/debug.h"
+#include "debug.h"
 
 #undef min
 #undef max
@@ -479,7 +479,7 @@ inline double wrap(double t, double hi) {
 #   pragma warning (pop)
 #endif
 
-#include "Collision/g3dlite/G3D/g3dmath.inl"
+#include "g3dmath.inl"
 
 #endif
 

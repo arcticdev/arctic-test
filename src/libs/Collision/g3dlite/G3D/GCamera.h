@@ -7,10 +7,10 @@
 #ifndef G3D_GCAMERA_H
 #define G3D_GCAMERA_H
 
-#include "Collision/g3dlite/G3D/platform.h"
-#include "Collision/g3dlite/G3D/CoordinateFrame.h"
-#include "Collision/g3dlite/G3D/Vector3.h"
-#include "Collision/g3dlite/G3D/Plane.h"
+#include "platform.h"
+#include "CoordinateFrame.h"
+#include "Vector3.h"
+#include "Plane.h"
 
 namespace G3D {
 
