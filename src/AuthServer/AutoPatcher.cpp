@@ -5,7 +5,6 @@
  */
 
 #include "LogonStdAfx.h"
-#include "../libs/Auth/MD5.h"
 
 #ifndef WIN32
 #include <fcntl.h>
@@ -19,9 +18,9 @@ PatchMgr::PatchMgr()
 	// load patches
 #ifdef WIN32
 	Log.Notice("PatchMgr", "Loading Patches...");
-	char Buffer[MAX_PATH * 10];
-	char Buffer2[MAX_PATH * 10];
-	char Buffer3[MAX_PATH * 10];
+	char Buffer[MAX_PATH*10];
+	char Buffer2[MAX_PATH*10];
+	char Buffer3[MAX_PATH*10];
 
 	WIN32_FIND_DATA fd;
 	HANDLE fHandle;
@@ -33,7 +32,7 @@ PatchMgr::PatchMgr()
 	char locality[5];
 	uint32 i;
 
-	if(!GetCurrentDirectory(MAX_PATH * 10, Buffer))
+	if(!GetCurrentDirectory(MAX_PATH*10, Buffer))
 		return;
 
 	strcpy(Buffer2,Buffer);
@@ -44,8 +43,8 @@ PatchMgr::PatchMgr()
 
 	do 
 	{
-		snprintf(Buffer3, MAX_PATH * 10, "%s\\ClientPatches\\%s", Buffer2, fd.cFileName);
-		if(sscanf(fd.cFileName, "%4s%u.", locality, &srcversion) != 2)
+		snprintf(Buffer3,MAX_PATH*10,"%s\\ClientPatches\\%s", Buffer2, fd.cFileName);
+		if(sscanf(fd.cFileName,"%4s%u.", locality, &srcversion) != 2)
 			continue;
 
 		hFile = CreateFile(Buffer3, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_ARCHIVE, NULL);
@@ -87,15 +86,14 @@ PatchMgr::PatchMgr()
 		// add the patch to the patchlist
 		m_patches.push_back(pPatch);
 
-	}
-	while(FindNextFile(fHandle,&fd));
+	} while(FindNextFile(fHandle,&fd));
 	FindClose(fHandle);
 #else
 	/* nix patch loader */
 	Log.Notice("PatchMgr", "Loading Patches...");
-	char Buffer[MAX_PATH * 10];
-	char Buffer2[MAX_PATH * 10];
-	char Buffer3[MAX_PATH * 10];
+	char Buffer[MAX_PATH*10];
+	char Buffer2[MAX_PATH*10];
+	char Buffer3[MAX_PATH*10];
 
 	struct dirent ** list;
 	int filecount;
@@ -118,9 +116,10 @@ PatchMgr::PatchMgr()
 		Log.Error("PatchMgr", "No patches found.");
 		return;
 	}
+
 	while(filecount--)
 	{
-		snprintf(Buffer3, MAX_PATH * 10, "./ClientPatches/%s", list[filecount]->d_name);
+		snprintf(Buffer3, MAX_PATH*10, "./ClientPatches/%s", list[filecount]->d_name);
 		if(sscanf(list[filecount]->d_name, "%4s%u.", locality, &srcversion) != 2)
 			continue;
 
@@ -317,7 +316,7 @@ bool PatchJob::Update()
 	m_client->BurstEnd();
 
 	// no need to check the result here, could just be a full buffer and not necessarily a fatal error.
-	return (m_bytesLeft > 0);
+	return (m_bytesLeft>0)?true:false;
 }
 
 bool PatchMgr::InitiatePatch(Patch * pPatch, AuthSocket * pClient)

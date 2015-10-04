@@ -21,10 +21,10 @@ class LogonConsole :  public Singleton < LogonConsole >
 {
 	friend class LogonConsoleThread;
 
-public:						// Public methods:
+public: // Public methods:
 	void Kill();
 
-protected:					// Protected methods:
+protected: // Protected methods:
 	LogonConsoleThread *_thread;
 
 	// Process one command

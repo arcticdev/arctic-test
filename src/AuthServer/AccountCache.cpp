@@ -5,6 +5,7 @@
  */
 
 #include "LogonStdAfx.h"
+
 initialiseSingleton(AccountMgr);
 initialiseSingleton(IPBanner);
 initialiseSingleton(InformationCore);
@@ -47,8 +48,7 @@ void AccountMgr::ReloadAccounts(bool silent)
 			// add to our "known" list
 			account_list.insert(AccountName);
 
-		}
-		while(result->NextRow());
+		} while(result->NextRow());
 
 		delete result;
 	}
@@ -98,7 +98,8 @@ void AccountMgr::AddAccount(Field* field)
 	{
 		// Accounts should be unbanned once the date is past their set expiry date.
 		acct->Banned = 0;
-		sLogonSQL->Execute("UPDATE `accounts` SET `banned`=0 WHERE `acct`=%u",acct->AccountId);
+
+		sLogonSQL->Execute("UPDATE accounts SET banned = 0 WHERE acct=%u",acct->AccountId);
 	}
 	acct->SetGMFlags(GMFlags.c_str());
 	acct->Locale[0] = 'e';
@@ -114,7 +115,7 @@ void AccountMgr::AddAccount(Field* field)
 	else
 		acct->forcedLocale = false;
 
-    acct->Muted = field[7].GetUInt32();
+	acct->Muted = field[7].GetUInt32();
 	if ((uint32)UNIXTIME > acct->Muted && acct->Muted != 0 && acct->Muted != 1) // 1 = perm ban?
 	{
 		// Accounts should be unbanned once the date is past their set expiry date.
@@ -385,9 +386,7 @@ void IPBanner::Reload()
 			ipb.db_ip = ip;
 			banList.push_back(ipb);
 
-		}
-		while (result->NextRow());
-		
+		} while (result->NextRow());
 		delete result;
 	}
 	listBusy.Release();
@@ -396,7 +395,7 @@ void IPBanner::Reload()
 Realm * InformationCore::AddRealm(uint32 realm_id, Realm * rlm)
 {
 	realmLock.Acquire();
-	m_realms.insert(make_pair(realm_id, rlm));
+	m_realms.insert( make_pair( realm_id, rlm ) );
 	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
 	realmLock.Release();
 	return rlm;
@@ -433,13 +432,13 @@ void InformationCore::RemoveRealm(uint32 realm_id)
 {
 	realmLock.Acquire();
 	map<uint32, Realm*>::iterator itr = m_realms.find(realm_id);
-	
+
 	if(itr != m_realms.end())
 	{
 		delete itr->second;
 		m_realms.erase(itr);
 	}
-	
+
 	realmLock.Release();
 }
 
@@ -476,7 +475,7 @@ void InformationCore::SendRealms(AuthSocket * Socket)
 	{
 		data << itr->second->Icon;
 		data << uint8(0); // delete when using data << itr->second->Lock;
-		data << itr->second->Colour;		
+		data << itr->second->Colour;
 
 		// This part is the same for all.
 		data << itr->second->Name;

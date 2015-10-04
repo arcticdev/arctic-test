@@ -5,8 +5,6 @@
  */
 
 #include "LogonStdAfx.h"
-#include "LogonConsole.h"
-#include "Log.h"
 
 initialiseSingleton(LogonConsole);
 bool Rehash();

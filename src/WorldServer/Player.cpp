@@ -12076,11 +12076,11 @@ void Player::InitAsVehicle()
 	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, sizeof(GetNewGUID())+4);
 	data << GetNewGUID() << uint32(GetVehicleEntry());
 	SendMessageToSet(&data, true);
-	data.Initialize(SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA, 0);
+	data.Initialize(SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA);
 	GetSession()->SendPacket(&data);
 	m_passengers[0] = this;
 	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
-	InstallExtras();
+
 }
 
 void Player::DeInitAsVehicle()

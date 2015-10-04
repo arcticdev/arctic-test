@@ -5,6 +5,7 @@
  */
 
 #include "LogonStdAfx.h"
+
 #pragma pack(push, 1)
 typedef struct
 {
@@ -13,10 +14,7 @@ typedef struct
 }logonpacket;
 #pragma pack(pop)
 
-ARCTIC_INLINE static void swap32(uint32* p)
-{
-	*p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24);
-}
+ARCTIC_INLINE static void swap32(uint32* p) { *p = ((*p >> 24 & 0xff)) | ((*p >> 8) & 0xff00) | ((*p << 8) & 0xff0000) | (*p << 24); }
 
 LogonCommServerSocket::LogonCommServerSocket(SOCKET fd) : Socket(fd, 65536, 524288)
 {
@@ -271,9 +269,8 @@ void LogonCommServerSocket::SendPacket(WorldPacket * data)
 	}
 
 	if(rv)
-	{
 		BurstPush();
-	}
+
 	BurstEnd();
 }
 
@@ -371,9 +368,7 @@ void LogonCommServerSocket::HandleUpdateMapping(WorldPacket & recvData)
 
 	Realm * realm = sInfoCore.GetRealm(realm_id);
 	if(!realm)
-	{
 		return;
-	}
 	
 	sInfoCore.getRealmLock().Acquire();
 	recvData >> account_id >> chars_to_add;
@@ -397,7 +392,7 @@ void LogonCommServerSocket::HandleTestConsoleLogin(WorldPacket & recvData)
 	recvData >> request;
 	recvData >> accountname;
 	recvData.read(key, 20);
-	DEBUG_LOG("LogonCommServerSocket", "Testing console login: %s\n", accountname.c_str());
+	DEBUG_LOG("LogonCommServerSocket","Testing console login: %s\n", accountname.c_str());
 
 	data << request;
 

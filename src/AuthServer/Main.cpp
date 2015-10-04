@@ -5,18 +5,8 @@
  */
 
 #include "LogonStdAfx.h"
-#include <signal.h>
-#include "svn_revision.h"
-#ifndef WIN32
-#include <sys/resource.h>
-#endif
-#include "../libs/Getopt.h"
 
 #define BANNER "WoWArcTic MMORPG Server :: AuthServer r%u/%s-%s-%s\n"
-
-#ifndef WIN32
-#include <sched.h>
-#endif
 
 // Database impl
 Database * sLogonSQL;
@@ -36,10 +26,10 @@ void _OnSignal(int s)
 	{
 #ifndef WIN32
 	case SIGHUP:
-	   {
-		   sLog.outString("Received SIGHUP signal, reloading accounts.");
-		   AccountMgr::getSingleton().ReloadAccounts(true);
-	   }break;
+		{
+			sLog.outString("Received SIGHUP signal, reloading accounts.");
+			AccountMgr::getSingleton().ReloadAccounts(true);
+		}break;
 #endif
 	case SIGINT:
 	case SIGTERM:
@@ -157,7 +147,7 @@ bool IsServerAllowedMod(unsigned int IP)
 
 bool Rehash()
 {
-	char * config_file = "conf/AuthServer.conf";
+	char * config_file = "conf/AuthServer.conf"; // config file
 
 	if(!Config.MainConfig.SetSource(config_file))
 	{
@@ -243,7 +233,7 @@ void LogonServer::Run(int argc, char ** argv)
 	UNIXTIME = time(NULL);
 	g_localTime = *localtime(&UNIXTIME);
 
-	char * config_file = "conf/AuthServer.conf";
+	char * config_file = "conf/AuthServer.conf"; // config file
 
 	int file_log_level = DEF_VALUE_NOT_SET;
 	int screen_log_level = DEF_VALUE_NOT_SET;
@@ -431,9 +421,9 @@ void LogonServer::Run(int argc, char ** argv)
 	signal(SIGTERM, 0);
 	signal(SIGABRT, 0);
 #ifdef _WIN32
-        signal(SIGBREAK, 0);
+	signal(SIGBREAK, 0);
 #else
-        signal(SIGHUP, 0);
+	signal(SIGHUP, 0);
 #endif
 
 	pfc->kill();

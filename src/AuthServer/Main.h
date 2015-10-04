@@ -23,6 +23,7 @@ struct AllowedIP
 bool IsServerAllowed(unsigned int IP);
 bool IsServerAllowedMod(unsigned int IP);
 
+class LogonServer;
 class LogonServer : public Singleton< LogonServer >
 {
 public:

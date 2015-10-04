@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <signal.h>
 #include <list>
 #include <vector>
 #include <map>
@@ -13,37 +14,49 @@
 #include <string>
 // #include <fstream>
 
-#include "Common.h"
 #include <Network/Network.h>
 
+#include "../libs/svn_revision.h"
+#include "../libs/Getopt.h"
 #include "../libs/Log.h"
 #include "../libs/Utilities/Utility.h"
 #include "../libs/ByteBuffer.h"
+#include "../libs/Common.h"
 #include "../libs/Config/ConfigEnv.h"
 
 #include "../../dep/vc/include/zlib.h"
+#include "../../dep/vc/include/openssl/md5.h"
 
 #include "../libs/DataStorage/DatabaseEnv.h"
 #include "../libs/DataStorage/DBCStores.h"
 #include "../libs/DataStorage/dbcfile.h"
-
+#include "../libs/Auth/MD5.h"
 #include "../libs/Auth/BigNumber.h"
 #include "../libs/Auth/Sha1.h"
 #include "../libs/Auth/WowCrypt.h"
 #include "../libs/CrashHandler.h"
+#include "../libs/WorldPacket.h"
 
 #include "LogonOpcodes.h"
-#include "../AuthServer/Main.h"
-#include "../WorldServer/NameTables.h"
+#include "Main.h"
 #include "AccountCache.h"
+#include "AutoPatcher.h"
+#include "AuthSocket.h"
+#include "AuthStructs.h"
+#include "LogonOpcodes.h"
+#include "LogonCommServer.h"
+#include "LogonConsole.h"
 #include "PeriodicFunctionCall_Thread.h"
-#include "../AuthServer/AutoPatcher.h"
-#include "../AuthServer/AuthSocket.h"
-#include "../AuthServer/AuthStructs.h"
-#include "../AuthServer/LogonOpcodes.h"
-#include "../AuthServer/LogonCommServer.h"
-#include "../AuthServer/LogonConsole.h"
-#include "../libs/WorldPacket.h"
+
+#include "../WorldServer/NameTables.h"
+
+#ifndef WIN32
+#include <sys/resource.h>
+#endif
+
+#ifndef WIN32
+#include <sched.h>
+#endif
 
 // database decl
 extern Database* sLogonSQL;

@@ -69,7 +69,7 @@ void AuthSocket::HandleChallenge()
 
 	DEBUG_LOG("AuthChallenge","got header, body is 0x%02X bytes", full_size);
 
-	if(GetReadBuffer().GetSize() < uint32(full_size + 4))
+	if(GetReadBuffer().GetSize() < uint32(full_size+4))
 		return;
 
 	// Copy the data into our cached challenge structure
@@ -250,7 +250,7 @@ void AuthSocket::HandleProof()
 		return ;
 
 	// patch
-	if(m_patch && !m_account)
+	if(m_patch&&!m_account)
 	{
 		// RemoveReadBufferBytes(75,false);
 		GetReadBuffer().Remove(75);
@@ -264,7 +264,7 @@ void AuthSocket::HandleProof()
 	if(!m_account)
 		return;
 
-	DEBUG_LOG("AuthLogonProof", "Interleaving and checking proof...");
+	DEBUG_LOG("AuthLogonProof","Interleaving and checking proof...");
 
 	sAuthLogonProof_C lp;
 	GetReadBuffer().Read(&lp, sizeof(sAuthLogonProof_C));
@@ -286,25 +286,25 @@ void AuthSocket::HandleProof()
 	memcpy(t, S.AsByteArray(), 32);
 	for (int i = 0; i < 16; i++)
 	{
-		t1[i] = t[i * 2];
+		t1[i] = t[i*2];
 	}
 	sha.Initialize();
 	sha.UpdateData(t1, 16);
 	sha.Finalize();
 	for (int i = 0; i < 20; i++)
 	{
-		vK[i * 2] = sha.GetDigest()[i];
+		vK[i*2] = sha.GetDigest()[i];
 	}
 	for (int i = 0; i < 16; i++)
 	{
-		t1[i] = t[i * 2 + 1];
+		t1[i] = t[i*2+1];
 	}
 	sha.Initialize();
 	sha.UpdateData(t1, 16);
 	sha.Finalize();
 	for (int i = 0; i < 20; i++)
 	{
-		vK[i * 2 + 1] = sha.GetDigest()[i];
+		vK[i*2+1] = sha.GetDigest()[i];
 	}
 	m_sessionkey.SetBinary(vK, 40);
 
@@ -502,7 +502,7 @@ void AuthSocket::HandleReconnectChallenge()
 		return;
 
 	// Copy the data into our cached challenge structure
-	if((size_t)(full_size + 4) > sizeof(sAuthLogonChallenge_C))
+	if((size_t)(full_size+4) > sizeof(sAuthLogonChallenge_C))
 	{
 		Disconnect();
 		return;
@@ -581,14 +581,14 @@ void AuthSocket::HandleReconnectChallenge()
 		SendChallengeError(CE_SERVER_FULL);
 		return;
 	}
-	
-    ByteBuffer pkt;
-    pkt << uint8(0x02); // ReconnectChallenge
-    pkt << uint8(0x00);
-    rs.SetRand(16*8);
-    pkt.append(rs.AsByteBuffer()); // 16 bytes random
-    pkt << uint64(0x00) << uint64(0x00); // 16 bytes zeros
-    Send(pkt.contents(), uint32(pkt.size()));
+
+	ByteBuffer pkt;
+	pkt << (uint8) 0x02;					// ReconnectChallenge
+	pkt << (uint8) 0x00;
+	rs.SetRand(16*8);
+	pkt.append(rs.AsByteBuffer());			// 16 bytes random
+	pkt << (uint64) 0x00 << (uint64) 0x00;	// 16 bytes zeros
+	Send(pkt.contents(), uint32(pkt.size()));
 }
 
 void AuthSocket::HandleReconnectProof()
@@ -606,7 +606,7 @@ void AuthSocket::HandleReconnectProof()
 	}
 	else
 	{
-	    // Disconnect if the sessionkey invalid or not found
+		// Disconnect if the sessionkey invalid or not found
 		DEBUG_LOG("AuthReConnectProof","No matching SessionKey found while user %s tried to login.", AccountName.c_str());
 		Disconnect();
 		return;
@@ -630,9 +630,9 @@ void AuthSocket::HandleReconnectProof()
 	if (!memcmp(sha.GetDigest(), lp.R2, SHA_DIGEST_LENGTH))
 	{
 		ByteBuffer pkt;
-		pkt << (uint8)  0x03;	//ReconnectProof
+		pkt << (uint8)  0x03; //ReconnectProof
 		pkt << (uint8)  0x00;
-		pkt << (uint16) 0x00;	// 2 bytes zeros
+		pkt << (uint16) 0x00; // 2 bytes zeros
 		Send(pkt.contents(), uint32(pkt.size()));
 
 		// we're authenticated now :)
@@ -646,7 +646,7 @@ void AuthSocket::HandleReconnectProof()
 
 void AuthSocket::HandleTransferAccept()
 {
-	DEBUG_LOG("AuthSocket", "Accepted transfer");
+	DEBUG_LOG("AuthSocket","Accepted transfer");
 	if(!m_patch)
 		return;
 
@@ -656,7 +656,7 @@ void AuthSocket::HandleTransferAccept()
 
 void AuthSocket::HandleTransferResume()
 {
-	DEBUG_LOG("AuthSocket", "Resuming transfer");
+	DEBUG_LOG("AuthSocket","Resuming transfer");
 	if(!m_patch)
 		return;
 

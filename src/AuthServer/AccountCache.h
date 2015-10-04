@@ -108,9 +108,9 @@ public:
 	{
 
 #ifdef WIN32
-		for(HM_NAMESPACE::hash_map<string,Account*>::iterator itr = AccountDatabase.begin(); itr != AccountDatabase.end(); itr++)
+		for(HM_NAMESPACE::hash_map<string,Account*>::iterator itr = AccountDatabase.begin(); itr != AccountDatabase.end(); ++itr)
 #else
-		for(map<string,Account*>::iterator itr = AccountDatabase.begin(); itr != AccountDatabase.end(); itr++)
+		for(map<string,Account*>::iterator itr = AccountDatabase.begin(); itr != AccountDatabase.end(); ++itr)
 #endif
 		{
 			delete itr->second;
@@ -129,7 +129,6 @@ public:
 #else
 		map<string, Account*>::iterator itr = AccountDatabase.find(Name);
 #endif
-
 		if(itr == AccountDatabase.end())
 			pAccount = NULL;
 		else
@@ -170,6 +169,7 @@ private:
 protected:
 	Mutex setBusy;
 };
+
 class LogonCommServerSocket;
 typedef struct Realm
 {
@@ -190,7 +190,7 @@ class LogonCommServerSocket;
 
 class InformationCore : public Singleton<InformationCore>
 {
-	map<uint32, Realm*>		  m_realms;
+	map<uint32, Realm*>         m_realms;
 	set<LogonCommServerSocket*> m_serverSockets;
 	Mutex serverSocketLock;
 	Mutex realmLock;
@@ -209,20 +209,20 @@ public:
 	}
 
 	// Packets
-	void		  SendRealms(AuthSocket * Socket);
+	void SendRealms(AuthSocket * Socket);
 	
 	// Realm management
 	uint32 GenerateRealmID() { return ++realmhigh; }
 
-	Realm*		  AddRealm(uint32 realm_id, Realm * rlm);
-	Realm*        GetRealm(uint32 realm_id);
-	int32		  GetRealmIdByName(string Name);
-	void		  RemoveRealm(uint32 realm_id);
-	void		  UpdateRealmStatus(uint32 realm_id, uint8 Color);
-	void		  SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);
+	Realm* AddRealm(uint32 realm_id, Realm * rlm);
+	Realm* GetRealm(uint32 realm_id);
+	int32 GetRealmIdByName(string Name);
+	void RemoveRealm(uint32 realm_id);
+	void UpdateRealmStatus(uint32 realm_id, uint8 Color);
+	void SetRealmOffline(uint32 realm_id, LogonCommServerSocket *ss);
 
-	ARCTIC_INLINE void   AddServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.insert( sock ); serverSocketLock.Release(); }
-	ARCTIC_INLINE void   RemoveServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.erase( sock ); serverSocketLock.Release(); }
+	ARCTIC_INLINE void AddServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.insert( sock ); serverSocketLock.Release(); }
+	ARCTIC_INLINE void RemoveServerSocket(LogonCommServerSocket * sock) { serverSocketLock.Acquire(); m_serverSockets.erase( sock ); serverSocketLock.Release(); }
 
 	void TimeoutSockets();
 	void CheckServers();

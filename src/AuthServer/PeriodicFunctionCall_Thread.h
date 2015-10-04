@@ -12,7 +12,8 @@ template<class Type>
 class PeriodicFunctionCaller : public ThreadContext
 {
 public:
-	template<class T> PeriodicFunctionCaller(T * callback, void (T::*method)(), uint32 Interval)
+	template<class T>
+		PeriodicFunctionCaller(T * callback, void (T::*method)(), uint32 Interval)
 	{
 		cb = new CallbackP0<T>(callback, method);
 		interval = Interval;
