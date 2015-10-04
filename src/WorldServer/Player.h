@@ -2209,24 +2209,35 @@ public:
 	uint32 m_deathRuneMasteryChance;
 
 private:
+
 	// Stuff for "Talent Inspect"
 	#define TALENT_INSPECT_BYTES 71
 	uint8 m_talentInspectBuffer[TALENT_INSPECT_BYTES];
 	void SetTaximaskNode(uint32 nodeidx, bool UnSet = false);
+
 public:
+
 	void AddTaximaskNode(uint32 nodeidx){SetTaximaskNode(nodeidx, false);}
 	void RemoveTaximaskNode(uint32 nodeidx){SetTaximaskNode(nodeidx, true);}
 
 	ARCTIC_INLINE const uint8 *GetTalentInspectBuffer() { return m_talentInspectBuffer; }
-	void UpdateTalentInspectBuffer();
+
 	static void InitializeTalentInspectSupport();
-	void AddPassenger(Unit* unit, int8 slot = -1);
-	void RemovePassenger(Unit* pPassenger);
+	void UpdateTalentInspectBuffer();
 
 	// loooooot
 	void GenerateLoot(Corpse* pCorpse);
 	void EventClusterMapChange(uint32 mapid, uint32 instanceid, LocationVector location);
 	void HandleClusterRemove();
+
+	// Player Vehicles
+public:
+
+	void InitAsVehicle();
+	void DeInitAsVehicle();
+	void AddPassenger(Unit* unit, int8 slot = -1);
+	void ChangeSeats(Unit* pPassenger, uint8 seatid);
+	void RemovePassenger(Unit* pPassenger);
 };
 
 class SkillIterator
@@ -2235,7 +2246,9 @@ class SkillIterator
 	SkillMap::iterator m_endItr;
 	bool m_searchInProgress;
 	Player* m_target;
+
 public:
+
 	SkillIterator(Player* target) : m_searchInProgress(false),m_target(target) {}
 	~SkillIterator() { if(m_searchInProgress) { EndSearch(); } if(m_target) { m_target = NULL; } }
 

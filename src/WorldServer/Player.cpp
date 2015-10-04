@@ -12054,6 +12054,64 @@ void Player::EventCheckCurrencies()
 	itr.EndSearch();
 }
 
+void Player::InitAsVehicle()
+{
+	VehicleEntry * ve = dbcVehicle.LookupEntry(m_vehicleEntry);
+	if(!ve)
+	{
+		OUT_DEBUG("Attempted to create non-existant vehicle %u.", m_vehicleEntry);
+		return;
+	}
+
+	for( uint32 i = 0; i < 8; i++ )
+	{
+		if( ve->m_seatID[i] )
+		{
+			m_vehicleSeats[i] = dbcVehicleSeat.LookupEntry( ve->m_seatID[i] );
+			if(m_vehicleSeats[i]->IsUsable())
+				seatisusable[i] = true;
+		}
+	}
+	SetVehicle(this);
+	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, sizeof(GetNewGUID())+4);
+	data << GetNewGUID() << uint32(GetVehicleEntry());
+	SendMessageToSet(&data, true);
+	data.Initialize(SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA, 0);
+	GetSession()->SendPacket(&data);
+	m_passengers[0] = this;
+	SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
+	InstallExtras();
+}
+
+void Player::DeInitAsVehicle()
+{
+	for(uint32 i = 0; i < 8; i++)
+	{
+		if(i > 0)
+		{
+			if(m_passengers[i])
+			{
+				if(m_passengers[i]->IsPlayer())
+					RemovePassenger(m_passengers[i]);
+				else if(m_passengers[i]->IsCreature())
+				{
+					TO_CREATURE(m_passengers[i])->Despawn(5000, 0);
+					RemovePassenger(m_passengers[i]);
+				}
+			}
+		}
+
+		m_passengers[i] = NULL;
+		m_vehicleSeats[i] = NULL;
+		seatisusable[i] = false;
+	}
+	SetVehicle(NULL);
+	WorldPacket data(SMSG_PLAYER_VEHICLE_DATA, 12);
+	data << GetNewGUID() << uint32(0);
+	SendMessageToSet(&data, true);
+	RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_MOUNT);
+}
+
 void Player::AddPassenger(Unit* unit, int8 slot)
 {
 	if(slot > 7)

@@ -9,6 +9,8 @@
 #include "NGLog.h"
 
 SERVER_DECL DBCStorage<AreaTriggerEntry> dbcAreaTrigger;
+SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
+SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<AreaGroup> dbcAreaGroup;
 SERVER_DECL DBCStorage<GemPropertyEntry> dbcGemProperty;
 SERVER_DECL DBCStorage<GlyphPropertyEntry> dbcGlyphProperty;
@@ -59,17 +61,15 @@ SERVER_DECL DBCStorage<gtFloat> dbcManaRegenBase;
 SERVER_DECL DBCStorage<gtFloat> dbcHPRegen;
 SERVER_DECL DBCStorage<gtFloat> dbcHPRegenBase;
 SERVER_DECL DBCStorage<SpellShapeshiftForm> dbcSpellShapeshiftForm;
-SERVER_DECL DBCStorage<AchievementEntry> dbcAchievement;
-SERVER_DECL DBCStorage<AchievementCriteriaEntry> dbcAchievementCriteria;
 SERVER_DECL DBCStorage<VehicleEntry> dbcVehicle;
 SERVER_DECL DBCStorage<VehicleSeatEntry> dbcVehicleSeat;
 SERVER_DECL DBCStorage<WorldMapOverlayEntry> dbcWorldMapOverlay;
+SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
 SERVER_DECL DBCStorage<SummonPropertiesEntry> dbcSummonProps;
 SERVER_DECL DBCStorage<AreaPOIEntry> dbcAreaPOI;
 SERVER_DECL DBCStorage<CurrencyTypesEntry> dbcCurrencyTypes;
 SERVER_DECL DBCStorage<QuestXP> dbcQuestXP;
-SERVER_DECL DBCStorage<WMOAreaTableEntry> dbcWMOAreaTable;
-SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelData;
+SERVER_DECL DBCStorage<DestructibleModelDataEntry> dbcDestructibleModelDataEntry;
 
 const char* SummonPropertiesfmt = "uuuuuu";
 const char* AreaTriggerFormat = "uuffffffff";
@@ -251,8 +251,7 @@ bool LoadDBCs()
 
 	LOAD_DBC("DBC/QuestXP.dbc", questxpformat, true, dbcQuestXP, false );
 
-	LOAD_DBC("DBC/DestructibleModelData.dbc", DestructibleModelDataFormat, true, dbcDestructibleModelData, false);
-
+	LOAD_DBC("DBC/DestructibleModelData.dbc", DestructibleModelDataFormat, true, dbcDestructibleModelDataEntry, false); 
 	return true;
 }
 

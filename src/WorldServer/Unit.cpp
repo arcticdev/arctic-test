@@ -41,6 +41,7 @@ Unit::Unit()
 	m_teleportAckCounter = 0;
 	m_inVehicleSeatId = 0xFF;
 	m_CurrentVehicle = NULL;
+	ExitingVehicle = false;
 
 	// Transport shit
 	m_transportPosition = new LocationVector(0, 0, 0, 0);
@@ -3294,7 +3295,7 @@ else
 		if( IsPlayer() )
 		{
 			Player* plr = TO_PLAYER( this );
-			if( plr->getClass() == CLASS_WARRIOR	)
+			if( plr->getClass() == CLASS_WARRIOR )
 			{
 				plr->AddComboPoints( pVictim->GetGUID(), 1 );
 				plr->UpdateComboPoints();
@@ -3551,7 +3552,7 @@ else
 								dmg.full_damage += dmg.full_damage * ((GetDummyAura(SPELL_HASH_PREY_ON_THE_WEAK)->RankNumber * 4) / 100);
 						}
 
-						SetFlag(UNIT_FIELD_AURASTATE,AURASTATE_FLAG_CRITICAL);	//SB@L: Enables spells requiring critical strike
+						SetFlag(UNIT_FIELD_AURASTATE,AURASTATE_FLAG_CRITICAL); //SB@L: Enables spells requiring critical strike
 						if(!sEventMgr.HasEvent( this ,EVENT_CRIT_FLAG_EXPIRE))
 							sEventMgr.AddEvent( TO_UNIT( this ),&Unit::EventAurastateExpire,(uint32)AURASTATE_FLAG_CRITICAL,EVENT_CRIT_FLAG_EXPIRE,5000,1,0);
 						else
@@ -4019,30 +4020,12 @@ void Unit::smsg_AttackStart(Unit* pVictim)
 
 	Player* pThis = TO_PLAYER(this);
 
-	// Prevent user from ignoring attack speed and stopping and start combat really really fast
-	/*if(!isAttackReady())
-		setAttackTimer(uint32(0));
-	else if(!canReachWithAttack(pVictim))
-	{
-		setAttackTimer(uint32(500));
-		//pGetSession()->OutPacket(SMSG_ATTACKSWING_NOTINRANGE);
-	}
-	else if(!isInFront(pVictim))
-	{
-		setAttackTimer(uint32(500));
-		//pGetSession()->OutPacket(SMSG_ATTACKSWING_NOTINRANGE);
-	}*/
-
 	// Send out ATTACKSTART
 	WorldPacket data(SMSG_ATTACKSTART, 16);
 	data << GetGUID();
 	data << pVictim->GetGUID();
 	SendMessageToSet(&data, true);
 	DEBUG_LOG( "WORLD"," Sent SMSG_ATTACKSTART" );
-
-	// FLAGS changed so other players see attack animation
-	//	addUnitFlag(UNIT_FLAG_COMBAT);
-	//	setUpdateMaskBit(UNIT_FIELD_FLAGS );
 }
 
 void Unit::AddAura(Aura* aur)
