@@ -338,7 +338,7 @@ void WorldSession::HandleSwapInvItemOpcode( WorldPacket & recv_data )
 	CHECK_INWORLD_RETURN;
 	CHECK_PACKET_SIZE(recv_data, 2);
 	WorldPacket data;
-	int8 dstslot = 0, srcslot = 0;
+	int8 srcslot = 0, dstslot = 0;
 	int8 error = 0;
 
 	recv_data >> dstslot >> srcslot;
@@ -529,7 +529,7 @@ void WorldSession::HandleDestroyItemOpcode( WorldPacket & recv_data )
 			}
 		}
 
-		uint32 mail_id = it->GetUInt32Value(ITEM_FIELD_ITEM_TEXT_ID);
+		uint32 mail_id = it->GetUInt32Value(ITEM_FIELD_PAD);
 		if(mail_id)
 			_player->m_mailBox->OnMessageCopyDeleted(mail_id);
 
@@ -730,7 +730,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 	data << itemProto->DisplayInfoID;
 	data << itemProto->Quality;
 	data << itemProto->Flags;
-	data << itemProto->Faction;	//Added in 3.2
+	data << itemProto->Faction;	// Added in 3.2
 	data << itemProto->BuyPrice;
 	data << itemProto->SellPrice;
 	data << itemProto->InventoryType;
@@ -783,7 +783,7 @@ void WorldSession::HandleItemQuerySingleOpcode( WorldPacket & recv_data )
 		data << itemProto->Spells[i].CategoryCooldown;
 	}
 	data << itemProto->Bonding;
-	data << itemProto->Description;
+	// data << itemProto->Description;
 
 	data << itemProto->PageId;
 	data << itemProto->PageLanguage;
@@ -1180,7 +1180,7 @@ void WorldSession::HandleBuyItemInSlotOpcode( WorldPacket & recv_data ) // drag 
 			return;
 		}
 
-        pItem = objmgr.CreateItem(it->ItemId, _player);
+		pItem = objmgr.CreateItem(it->ItemId, _player);
 		if(pItem)
 		{
 			pItem->SetUInt32Value(ITEM_FIELD_STACK_COUNT, count_per_stack);
@@ -1231,8 +1231,7 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 	uint32 itemid = 0;
 	int32 slot = 0;
 	uint8 amount = 0;
-//	int8 playerslot = 0;
-//	int8 bagslot = 0;
+
 	Item* add = NULL;
 	uint8 error = 0;
 	SlotResult slotresult;
@@ -1284,11 +1283,11 @@ void WorldSession::HandleBuyItemOpcode( WorldPacket & recv_data ) // right-click
 		return;
 	}
 
-   if((error = _player->GetItemInterface()->CanAffordItem(it, amount, unit, item.extended_cost)))
-   {
-      SendBuyFailed(srcguid, itemid, error);
-      return;
-   }
+	if((error = _player->GetItemInterface()->CanAffordItem(it, amount, unit, item.extended_cost)))
+	{
+		SendBuyFailed(srcguid, itemid, error);
+		return;
+	}
 
 	// Find free slot and break if inv full
 	add = _player->GetItemInterface()->FindItemLessMax(itemid,amount*item.amount, false);
@@ -1808,7 +1807,7 @@ void WorldSession::HandleAutoStoreBankItemOpcode(WorldPacket &recvPacket)
 	}
 	else
 	{
-        eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot, SrcSlot, false);
+		eitem = _player->GetItemInterface()->SafeRemoveAndRetreiveItemFromSlot(SrcInvSlot, SrcSlot, false);
 		if (!_player->GetItemInterface()->AddItemToFreeSlot(eitem))
 		{
 			OUT_DEBUG("[ERROR]AutoStoreBankItem: Error while adding item from one of the bank bags to the player bag!\n");
