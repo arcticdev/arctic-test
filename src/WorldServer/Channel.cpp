@@ -180,11 +180,11 @@ void Channel::Part(Player* plr, bool silent)
 	}
 
 #ifndef WIN32
-    if(m_members.size() == 0 )
-    {
-        m_lock.Release();
+	if(m_members.size() == 0 )
+	{
+		m_lock.Release();
 		channelmgr.RemoveChannel(this);
-    }
+	}
 	else
 		m_lock.Release();
 #else

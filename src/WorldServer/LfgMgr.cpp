@@ -129,7 +129,7 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 		return;
 
 	m_lock.Acquire();
-	for(itr = m_lookingForGroup[LfgDungeonId].begin(); itr != m_lookingForGroup[LfgDungeonId].end(); itr++)
+	for(itr = m_lookingForGroup[LfgDungeonId].begin(); itr != m_lookingForGroup[LfgDungeonId].end(); ++itr)
 	{
         plr = *itr;
 
@@ -141,7 +141,7 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 			possibleMembers.push_back(plr);
 	}
 
-	for(itr = m_lookingForMore[LfgDungeonId].begin(); itr != m_lookingForMore[LfgDungeonId].end(); itr++)
+	for(itr = m_lookingForMore[LfgDungeonId].begin(); itr != m_lookingForMore[LfgDungeonId].end(); ++itr)
 	{
 		if(plr->GetGroup())
 		{
@@ -165,7 +165,7 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 
 	if(possibleMembers.size() > 0)
 	{
-		for(itr = possibleGroupLeaders.begin(); itr != possibleGroupLeaders.end(); itr++)
+		for(itr = possibleGroupLeaders.begin(); itr != possibleGroupLeaders.end(); ++itr)
 		{
 			for(it2 = possibleMembers.begin(); it2 != possibleMembers.end();)
 			{
@@ -209,7 +209,17 @@ void LfgMgr::UpdateLfgQueue(uint32 LfgDungeonId)
 
 void LfgMgr::SendLfgList( Player* plr, uint32 Dungeon )
 {
-	return; 
+	if( plr == NULL )
+		return;
+
+	if( Dungeon >= MAX_DUNGEONS )
+		return;
+
+	LfgPlayerList::iterator itr;
+	GroupMembersSet::iterator it2;
+	uint32 count = 0;
+
+	m_lock.Acquire();
 }
 
 void LfgMgr::SetPlayerInLfmList(Player* pl, uint32 LfgDungeonId)

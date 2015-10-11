@@ -20,6 +20,8 @@
 #include <sstream>
 #include <string>
 
+#include "../libs/svn_revision.h"
+
 #include "../libs/AuthCodes.h"
 #include "../libs/Common.h"
 #include "../libs/MersenneTwister.h"
@@ -55,6 +57,7 @@
 #include "../libs/Threading/Condition.h"
 #include "../libs/Getopt.h"
 #include "../libs/BufferPool.h"
+#include "../libs/Console/BaseConsole.h"
 
 #include "Const.h"
 #include "NameTables.h"
@@ -162,3 +165,4 @@
 
 #include "Master.h"
 #include "BaseConsole.h"
+#include "ConsoleCommands.h"

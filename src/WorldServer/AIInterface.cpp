@@ -406,7 +406,6 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 
 				m_WanderTimer = 0;
 
-				//CALL_SCRIPT_EVENT(m_Unit, OnWander)(pUnit, 0); FIXME
 				m_AIState = STATE_WANDER;
 				StopMovement(1);
 
@@ -438,7 +437,7 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 		}
 	}
 
-	//Should be able to do this stuff even when evading
+	// Should be able to do this stuff even when evading
 	switch(event)
 	{
 		case EVENT_UNITDIED:
@@ -480,7 +479,7 @@ void AIInterface::HandleEvent(uint32 event, Unit* pUnit, uint32 misc1)
 
 			SetNextTarget(NULL);
 
-			//reset waypoint to 1
+			// reset waypoint to 1
 			m_currentWaypoint = 1;
 
 			// There isn't any need to do any attacker checks here, as
@@ -527,9 +526,9 @@ void AIInterface::Update(uint32 p_time)
 				)
 				)
 			{
-				//we set no target and see if we managed to fid a new one
+				// we set no target and see if we managed to fid a new one
 				m_nextTarget = NULL;
-				//something happend to our target, pick another one
+				// something happend to our target, pick another one
 				pSpell->GenerateTargets(&targets);
 				if(targets.m_targetMask & TARGET_FLAG_UNIT)
 					m_nextTarget = m_Unit->GetMapMgr()->GetUnit(targets.m_unitTarget);
@@ -571,7 +570,7 @@ void AIInterface::Update(uint32 p_time)
 					_UpdateCombat(p_time);
 				}
 			}
-			//we just use any creature as a pet guardian
+			// we just use any creature as a pet guardian
 			else if(!m_Unit->IsPet())
 			{
 				_UpdateCombat(p_time);
@@ -592,23 +591,7 @@ void AIInterface::Update(uint32 p_time)
 			m_AIState = STATE_IDLE;
 			m_returnX = m_returnY = m_returnZ = 0.0f;
 			m_moveRun = false;
-			//remowed by zack : in scripted events if we keep reducing this it will bug the world out !
-			//On Blizz it will return to previous wp but we can accept the fact that it will move on to next one
-			/*
-			if(hasWaypoints())
-			{
-				if(m_moveBackward)
-				{
-					if(m_currentWaypoint != GetWayPointsCount()-1)
-						m_currentWaypoint++;
-				}
-				else
-				{
-					if(m_currentWaypoint != 0)
-						m_currentWaypoint--;
-				}
-			}
-			*/
+
 			// Set health to full if they at there last location before attacking
 			if(m_AIType != AITYPE_PET&&!skip_reset_hp)
 				m_Unit->SetUInt32Value(UNIT_FIELD_HEALTH,m_Unit->GetUInt32Value(UNIT_FIELD_MAXHEALTH));
@@ -646,19 +629,6 @@ void AIInterface::Update(uint32 p_time)
 			SetNextTarget(FindTargetForSpell(m_nextSpell));
 		}
 	}
-
-	//Pet Dismiss after a certian ditance away
-	/*if(m_AIType == AITYPE_PET && m_PetOwner != NULL)
-	{
-		float dist = (m_Unit->GetInstanceID() == m_PetOwner->GetInstanceID()) ?
-			m_Unit->GetDistanceSq(m_PetOwner) : 99999.0f;
-
-		if(dist > 8100.0f) //90 yard away we Dismissed
-		{
-			DismissPet();
-			return;
-		}
-	}*/
 }
 
 void AIInterface::_UpdateTimer(uint32 p_time)
@@ -706,19 +676,6 @@ void AIInterface::_UpdateTargets()
 	if( m_updateAssist )
 	{
 		m_updateAssist = false;
-	/*	deque< Unit > tokill;
-
-		//modified for vs2005 compatibility
-		for(i = m_assistTargets.begin(); i != m_assistTargets.end(); ++i)
-		{
-			if(m_Unit->GetDistanceSq((*i)) > 2500.0f|| !(*i)->isAlive() || !(*i)->CombatStatus.IsInCombat())
-			{
-				tokill.push_back(*i);
-			}
-		}
-
-		for(deque< Unit >::iterator i2 = tokill.begin(); i2 != tokill.end(); ++i2)
-			m_assistTargets.erase(*i2);*/
 
 		for(i = m_assistTargets.begin(); i != m_assistTargets.end();)
 		{
@@ -734,19 +691,6 @@ void AIInterface::_UpdateTargets()
 	if( m_updateTargets )
 	{
 		m_updateTargets = false;
-		/*deque< Unit > tokill;
-
-		//modified for vs2005 compatibility
-		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();++itr)
-		{
-			if(!itr->first->isAlive() || m_Unit->GetDistanceSq(itr->first) >= 6400.0f)
-			{
-				tokill.push_back(itr->first);
-			}
-		}
-		for(deque< Unit >::iterator itr = tokill.begin(); itr != tokill.end(); itr++)
-			m_aiTargets.erase((*itr));
-		tokill.clear();*/
 
 		for(itr = m_aiTargets.begin(); itr != m_aiTargets.end();)
 		{
@@ -775,10 +719,6 @@ void AIInterface::_UpdateTargets()
 					firstLeaveCombat = false;
 				}
 			}
-			/*else
-			{
-				HandleEvent(EVENT_LEAVECOMBAT, m_Unit, 0);
-			}*/
 		}
 		else if( m_aiTargets.size() == 0 && (m_AIType == AITYPE_PET && (m_Unit->IsPet() && TO_PET(m_Unit)->GetPetState() == PET_STATE_AGGRESSIVE) || (!m_Unit->IsPet() && disable_melee == false ) ) )
 		{

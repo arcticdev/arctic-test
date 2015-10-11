@@ -257,6 +257,23 @@ void WorldSession::HandleTrainerBuySpellOpcode(WorldPacket& recvPacket)
 		else
 			_player->removeSpell(pSpell->DeleteSpell,true,false,0);
 	}
+	/////////////////////////////////////////////////////////////////////////////////
+	// As of 3.1.3 this is sent after buying the spell
+	//
+	//
+	// {SERVER} Packet: (0x01B3) SMSG_TRAINER_BUY_SUCCEEDED PacketSize = 12 TimeStamp = 39035968
+	// A0 85 00 06 7A 00 30 F1 2D 85 00 00
+	//
+	// structure:
+	//
+	// uint64 GUID    -  GUID of the trainer
+	// uint32 spellid -  ID of the spell we bought
+	//////////////////////////////////////////////////////////////////////////////////
+
+	WorldPacket data(SMSG_TRAINER_BUY_SUCCEEDED, 12);
+
+	data << uint64(Guid) << uint32(TeachingSpellID);
+	this->SendPacket(&data);
 }
 
 uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell*  pSpell)
@@ -286,6 +303,7 @@ uint8 WorldSession::TrainerGetSpellStatus(TrainerSpell*  pSpell)
 //////////////////////////////////////////////////////////////
 /// This function handles CMSG_PETITION_SHOWLIST:
 //////////////////////////////////////////////////////////////
+
 void WorldSession::HandleCharterShowListOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
@@ -324,36 +342,36 @@ void WorldSession::SendCharterRequest(Creature* pCreature)
 	}
 	else
 	{
-        // 2v2
-        data << uint32(1);									// index
-        data << uint32(ARENA_TEAM_CHARTER_2v2);				// charter entry
-        data << uint32(16161);								// charter display id
+		// 2v2
+		data << uint32(1);									// index
+		data << uint32(ARENA_TEAM_CHARTER_2v2);				// charter entry
+		data << uint32(16161);								// charter display id
 		if(sWorld.free_arena_teams)
 			data << uint32(0);
 		else
 			data << uint32(ARENA_TEAM_CHARTER_2v2_COST);	// charter cost (80g)
-        data << uint32(2);
-        data << uint32(2);									// required signs
-        // 3v3
-        data << uint32(2);									// index
-        data << uint32(ARENA_TEAM_CHARTER_3v3);				// charter entry
-        data << uint32(16161);								// charter display id
+		data << uint32(2);
+		data << uint32(2);									// required signs
+		// 3v3
+		data << uint32(2);									// index
+		data << uint32(ARENA_TEAM_CHARTER_3v3);				// charter entry
+		data << uint32(16161);								// charter display id
 		if(sWorld.free_arena_teams)
 			data << uint32(0);
 		else
 			data << uint32(ARENA_TEAM_CHARTER_3v3_COST);	// charter cost (120g)
-        data << uint32(3);
-        data << uint32(3);									// required signs
-        // 5v5
-        data << uint32(3);									// index
-        data << uint32(ARENA_TEAM_CHARTER_5v5);				// charter entry
-        data << uint32(16161);								// charter display id
+		data << uint32(3);
+		data << uint32(3);									// required signs
+		// 5v5
+		data << uint32(3);									// index
+		data << uint32(ARENA_TEAM_CHARTER_5v5);				// charter entry
+		data << uint32(16161);								// charter display id
 		if(sWorld.free_arena_teams)
 			data << uint32(0);
 		else
 			data << uint32(ARENA_TEAM_CHARTER_5v5_COST);	// charter cost
-        data << uint32(5);
-        data << uint32(5);									// required signs
+		data << uint32(5);
+		data << uint32(5);									// required signs
 	}
 
 	SendPacket(&data);
@@ -394,6 +412,7 @@ void WorldSession::SendAuctionList(Creature* auctioneer)
 //////////////////////////////////////////////////////////////
 /// This function handles CMSG_GOSSIP_HELLO:
 //////////////////////////////////////////////////////////////
+
 void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
@@ -409,7 +428,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 	//stop when talked to for 3 min
 	if(TalkingWith->GetAIInterface())
 		TalkingWith->GetAIInterface()->StopMovement(180000);
- 
+
 	// unstealth meh
 	if( _player->InStealth() )
 		_player->RemoveAllAurasOfType( SPELL_AURA_MOD_STEALTH );
@@ -481,6 +500,7 @@ void WorldSession::HandleGossipHelloOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 /// This function handles CMSG_GOSSIP_SELECT_OPTION:
 //////////////////////////////////////////////////////////////
+
 void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 {
 	CHECK_INWORLD_RETURN;
@@ -552,6 +572,7 @@ void WorldSession::HandleGossipSelectOptionOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 /// This function handles CMSG_SPIRIT_HEALER_ACTIVATE:
 //////////////////////////////////////////////////////////////
+
 void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 {
 	if(!_player->IsInWorld() ||!_player->isDead())
@@ -592,6 +613,7 @@ void WorldSession::HandleSpiritHealerActivateOpcode( WorldPacket & recv_data )
 //////////////////////////////////////////////////////////////
 /// This function handles CMSG_NPC_TEXT_QUERY:
 //////////////////////////////////////////////////////////////
+
 void WorldSession::HandleNpcTextQueryOpcode( WorldPacket & recv_data )
 {
 	uint8 bdata[50000];
@@ -659,18 +681,16 @@ void WorldSession::HandleBinderActivateOpcode( WorldPacket & recv_data )
 	_player->bHasBindDialogOpen = false;
 }
 
-
-void WorldSession::SendInnkeeperBind(Creature* pCreature)
-{
 #define ITEM_ID_HEARTH_STONE 6948
 #define BIND_SPELL_ID 3286
 
-	CHECK_INWORLD_RETURN;
+void WorldSession::SendInnkeeperBind(Creature* pCreature)
+{
 	WorldPacket data(45);
 
 	if(!_player->bHasBindDialogOpen)
 	{
-        OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
+		OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 		data.Initialize(SMSG_BINDER_CONFIRM);
 		data << pCreature->GetGUID() << _player->GetZoneId();
@@ -709,7 +729,7 @@ void WorldSession::SendInnkeeperBind(Creature* pCreature)
 	data << pCreature->GetGUID() << _player->GetBindZoneId();
 	SendPacket(&data);
 
-    OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
+	OutPacket(SMSG_GOSSIP_COMPLETE, 0, NULL);
 
 
 	// Animate and send the spell too

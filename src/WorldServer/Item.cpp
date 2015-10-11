@@ -6,12 +6,13 @@
 
 #include "StdAfx.h"
 
-Item::Item()//this is called when constructing as container
+Item::Item() // this is called when constructing as container
 {
 	m_itemProto = NULL;
 	m_owner = NULL;
 	locked = false;
 	wrapped_item_id = 0;
+	itemtextid = 0;
 
 	Enchantments.clear();
 }
@@ -115,7 +116,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	SetUInt32Value( OBJECT_FIELD_ENTRY, itemid );
 	m_owner = plr;
 
-	wrapped_item_id=fields[3].GetUInt32();
+	wrapped_item_id = fields[3].GetUInt32();
 	m_uint32Values[ITEM_FIELD_GIFTCREATOR] = fields[4].GetUInt32();
 	m_uint32Values[ITEM_FIELD_CREATOR] = fields[5].GetUInt32();
 
@@ -144,7 +145,7 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 	else if( random_suffix )
 		SetRandomSuffix( random_suffix );
 
-	SetUInt32Value( ITEM_FIELD_PAD, fields[11].GetUInt32() );
+	SetItemTextId(fields[11].GetUInt32());
 
 	SetUInt32Value( ITEM_FIELD_MAXDURABILITY, m_itemProto->MaxDurability );
 	SetUInt32Value( ITEM_FIELD_DURABILITY, fields[12].GetUInt32() );
@@ -167,9 +168,6 @@ void Item::LoadFromDB(Field* fields, Player* plr, bool light )
 			if( entry && entry->Id == enchant_id )
 			{
 				AddEnchantment( entry, time_left, ( time_left == 0 ), false, false, enchslot );
-			}
-			else
-			{
 			}
 		}
 	}
@@ -284,7 +282,7 @@ void Item::SaveToDB( int8 containerslot, int8 slot, bool firstsave, QueryBuffer*
 	ss << GetChargesLeft() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_FLAGS) << ",";
 	ss << random_prop << ", " << random_suffix << ", ";
-	ss << GetUInt32Value(ITEM_FIELD_PAD) << ",";
+	ss << GetItemTextId() << ",";
 	ss << GetUInt32Value(ITEM_FIELD_DURABILITY) << ",";
 	ss << static_cast<int>(containerslot) << ",";
 	ss << static_cast<int>(slot) << ",'";

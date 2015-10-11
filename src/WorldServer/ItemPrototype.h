@@ -601,7 +601,8 @@ enum SOCKET_GEM_COLOR
 };
 
 #pragma pack(push,1)
-struct SocketInfo {
+struct SocketInfo
+{
 	uint32 SocketColor;
 	uint32 Unk;
 };
@@ -697,8 +698,8 @@ struct ItemPrototype
 	int32 DisenchantReqSkill;
 	uint32 ArmorDamageModifier;
 
-	string lowercase_name;	// used in auctions
-	uint32 FoodType;		//pet food type
+	string lowercase_name;         // used in auctions
+	uint32 FoodType;               //pet food type
 	GossipScript * gossip_script;
 	int32 ForcedPetId;
 
@@ -711,6 +712,6 @@ typedef struct
 {
 	uint32 setid;
 	uint32 itemscount;
-	//Spell* spell[8];
+	// Spell* spell[8];
 }ItemSet;
 #pragma pack(pop)

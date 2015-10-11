@@ -111,7 +111,7 @@
     <Link>
       <AdditionalDependencies>ws2_32.lib;libmysql.lib;libeay32.lib;dbghelp.lib;zlib.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)AuthServer.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\dep\VC\lib_vc_100\lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dep\VC\lib_vc_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)AuthServer.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -195,7 +195,7 @@
     <Link>
       <AdditionalDependencies>ws2_32.lib;libmysql.lib;libeay32.lib;dbghelp.lib;zlib.lib;pcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)AuthServer.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\..\dep\VC\lib_vc_100\lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\dep\VC\lib_vc_100;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)AuthServer.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -287,16 +287,13 @@
     <ClInclude Include="..\..\src\AuthServer\Main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="libs.vcxproj">
+    <ResourceCompile Include="..\..\src\libs\icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="AuthServer.vcxproj">
       <Project>{90297c34-f231-4df4-848e-a74bcc0e40ed}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\libs\icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="..\..\src\libs\icon.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

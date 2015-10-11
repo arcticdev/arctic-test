@@ -5,15 +5,6 @@
  */
 
 #include "StdAfx.h"
-#include "../libs/svn_revision.h"
-
-#include "../libs/Common.h"
-#include "../libs/Network/Network.h"
-#include "../libs/Config/ConfigEnv.h"
-#include "../libs/Console/BaseConsole.h"
-
-#include "BaseConsole.h"
-#include "ConsoleCommands.h"
 
 #define LOCAL_BUFFER_SIZE 2048
 #define ENABLE_REMOTE_CONSOLE 1

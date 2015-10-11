@@ -245,9 +245,11 @@ public:
 		random_suffix = id;
 	}
 
-	bool HasEnchantments() { return ( Enchantments.size() > 0 ) ? true : false; }
-
 	uint32 wrapped_item_id;
+
+	bool HasEnchantments() { return ( Enchantments.size() > 0 ) ? true : false; }
+	uint32 GetItemTextId() { return itemtextid; };
+	void SetItemTextId(uint32 id) { itemtextid = id; };
 
 protected:
 
@@ -257,6 +259,7 @@ protected:
 	Player* m_owner; // let's not bother the manager with unneeded requests
 	uint32 random_prop;
 	uint32 random_suffix;
+	uint32 itemtextid;
 };
 
 uint32 GetSkillByProto( uint32, uint32 );

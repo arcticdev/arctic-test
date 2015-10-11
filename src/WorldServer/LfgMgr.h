@@ -20,16 +20,15 @@ enum LFGTypes
 	LFG_DAILY_HEROIC_DUNGEON = 9,
 };
 
-#define MAX_DUNGEONS 294+1 // check max entries +1 on lfgdungeons.dbc
+#define MAX_DUNGEONS 294+1 // check max entry's +1 on lfgdungeons.dbc
 #define MAX_LFG_QUEUE_ID 3
 #define LFG_MATCH_TIMEOUT 30 // in seconds
 
 class LfgMatch;
 class LfgMgr : public Singleton < LfgMgr >, EventableObject
 {
-public:	
-	
-	typedef list<Player*  > LfgPlayerList;
+public:
+	typedef list<Player*> LfgPlayerList;
 
 	LfgMgr();
 	~LfgMgr();
@@ -47,7 +46,6 @@ public:
 	int32 event_GetInstanceId() { return -1; }
 	
 protected:
-	
 	LfgPlayerList m_lookingForGroup[MAX_DUNGEONS];
 	LfgPlayerList m_lookingForMore[MAX_DUNGEONS];
 	Mutex m_lock;
@@ -56,11 +54,11 @@ protected:
 class LfgMatch
 {
 public:
-	set<Player*  > PendingPlayers;
-	set<Player*  > AcceptedPlayers;
+	set<Player*> PendingPlayers;
+	set<Player*> AcceptedPlayers;
 	Mutex lock;
 	uint32 DungeonId;
-    Group * pGroup;
+	Group * pGroup;
 
 	LfgMatch(uint32 did) : DungeonId(did),pGroup(NULL) { }
 };
